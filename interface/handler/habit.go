@@ -4,6 +4,7 @@ import (
 	"ddd/domain/model"
 	"ddd/usecase"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,8 +16,8 @@ import (
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
 // Publicで宣言
 type HabitHandler interface {
-	// Index(http.ResponseWriter, *http.Request)
-	Create(http.ResponseWriter, *http.Request)
+	IndexFunc(http.ResponseWriter, *http.Request)
+	CreateFunc(http.ResponseWriter, *http.Request)
 	// Update(http.ResponseWriter, *http.Request)
 }
 
@@ -33,7 +34,14 @@ func NewHabitHandler(hu usecase.HabitUseCase) HabitHandler {
 	}
 }
 
-func (hh habitHandler) Create(w http.ResponseWriter, r *http.Request) {
+// 第一引数にはHTTPサーバーからのレスポンスを出力することが出来るメソッドを持っている(該当のメソッドを実装している)構造体の値が来る
+func (hh habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("r.Body: %v\n", r.Body)
+	fmt.Printf("%T\n", w)                   // *http.response構造体
+	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
+}
+
+func (hh habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// Bodyを検証
 	reqBody, err := ioutil.ReadAll(r.Body)
