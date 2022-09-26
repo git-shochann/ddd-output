@@ -11,3 +11,8 @@ type Habit struct {
 	Finished bool   `gorm:"not null"`
 	UserID   int    `gorm:"not null"`
 }
+
+// バリデーション関連もここにまとめた
+type CreateHabitValidation struct {
+	Content string `json:"content" validate:"required"`
+}

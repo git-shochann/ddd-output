@@ -10,3 +10,17 @@ type User struct {
 	Password   string  `gorm:"not null"`
 	Habits     []Habit // User has many Habit
 }
+
+// バリデーション関連もここにまとめた
+
+type UserSignUpValidation struct {
+	FirstName string `json:"firstname" validate:"required"`
+	LastName  string `json:"lastname" validate:"required"`
+	Email     string `json:"email" validate:"required,email"`
+	Password  string `json:"password" validate:"required,min=8,max=15,containsany=0123456789"`
+}
+
+type UserSignInValidation struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=15,containsany=0123456789"`
+}
