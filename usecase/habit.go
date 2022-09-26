@@ -11,12 +11,11 @@ import (
 // ここのusecase層がすることは、図の上のinterface層から情報を受け取り、下のdomain層のインターフェースで定義してあるメソッドを用いてビジネスロジックを実行すること
 
 // インターフェース -> 窓口である
-// ここをどこで使う？
 type HabitUseCase interface {
 	CreateHabit(h *model.Habit) error
-	DeleteHabit(habitID, userID int, habit *model.Habit) error
-	UpdateHabit(habit *model.Habit) error
-	GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
+	// DeleteHabit(habitID, userID int, habit *model.Habit) error
+	// UpdateHabit(habit *model.Habit) error
+	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 }
 
 // これはなに？ -> ここの層でやることを構造体で表現する。
@@ -27,14 +26,14 @@ type HabitUseCase interface {
 
 // どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
-	habitRepository repository.HabitRepository // domain層のインターフェース
+	HabitRepository repository.HabitRepository // domain層のインターフェース
 }
 
-// インターフェースを引数にとってインターフェースを返す？
+// インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
 func NewHabitUseCase(hr repository.HabitRepository) HabitUseCase {
 	// なぜポインタ型？
 	return &habitUseCase{
-		habitRepository: hr,
+		HabitRepository: hr,
 	}
 }
 
@@ -57,5 +56,7 @@ func (hu habitUseCase) CreateHabit(h *model.Habit) error {
 	// 	}
 
 	// 	models.SendResponse(w, response, http.StatusOK)
+
+	return nil
 
 }
