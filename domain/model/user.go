@@ -1,6 +1,6 @@
 package model
 
-import "gorm.io/gorm"
+import "github.com/jinzhu/gorm"
 
 type User struct {
 	gorm.Model         // ID, CreatedAt, UpdatedAt, DeletedAt を作成

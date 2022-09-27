@@ -6,7 +6,7 @@ import (
 	"ddd/domain/repository"
 	"errors"
 
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // infrastructure層では、domain層に依存するように書く。

@@ -1,6 +1,6 @@
 package model
 
-import "gorm.io/gorm"
+import "github.com/jinzhu/gorm"
 
 // システムが扱う業務領域に関するコードを置くところ。
 // 他のレイヤーに依存しない。

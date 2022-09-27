@@ -27,7 +27,7 @@ type habitHandler struct {
 	HabitUseCase usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
 }
 
-// これは？ どこで呼び出す？ なんのために？
+// main関数で依存関係同士で繋ぐために必要
 func NewHabitHandler(hu usecase.HabitUseCase) HabitHandler {
 	return &habitHandler{
 		HabitUseCase: hu,
@@ -62,9 +62,7 @@ func (hh habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 実際にバリデーションを行う
 
-	// どう呼ぶ？（笑）
-
-	// 旧： errorMessage, err := habitValidation.CreateHabitValidator()
+	// errorMessage, err := habitValidation.CreateHabitValidator()
 
 	// 	if err != nil {
 	// 		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)

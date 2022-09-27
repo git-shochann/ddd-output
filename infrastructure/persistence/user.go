@@ -4,7 +4,7 @@ import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
 
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // エラーハンドリング
