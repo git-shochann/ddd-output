@@ -23,9 +23,17 @@ func main() {
 	habitUseCase := usecase.NewHabitUseCase(habitPersistence)               // usecase -> domain
 	habitHandler := handler.NewHabitHandler(habitUseCase)                   // interface -> usecase
 
+	// 環境変数の読み込み
+	envLogic := logic.NewEnvLogic()
+	envLogic.LoadEnv()
+
 	// ログの設定
-	logging := logic.NewLogging
-	logging.LoggingSetting()
+	loggingLogic := logic.NewLoggingLogic()
+	loggingLogic.LoggingSetting()
+
+	// レスポンスの設定
+
+	// JWTの設定
 
 	// ルーティングの設定
 	router := mux.NewRouter().StrictSlash(true)

@@ -8,19 +8,21 @@ import (
 	"os"
 )
 
-type Logging interface {
+type LoggingLogic interface {
 	LoggingSetting()
 }
 
-type logging struct{}
+type loggingLogic struct{}
 
-func NewLogging() Logging {
-	return &logging{}
+func NewLoggingLogic() LoggingLogic {
+	return &loggingLogic{}
 }
 
-// main関数でlogic.LoggingSetting()のように呼び出す
+// main()
+// 1. logging := logic.NewLogging()
+// 2. logging.LoggingSetting()
 
-func (l logging) LoggingSetting() {
+func (ll *loggingLogic) LoggingSetting() {
 	file, err := os.OpenFile("logging.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln(err)
