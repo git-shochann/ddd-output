@@ -31,9 +31,11 @@ func main() {
 	loggingLogic := logic.NewLoggingLogic()
 	loggingLogic.LoggingSetting()
 
-	// レスポンスの設定
-
 	// JWTの設定
+	jwtLogic := logic.NewJwtLogic()
+
+	// レスポンスの設定
+	responseLogic := logic.NewResponseLogic()
 
 	// ルーティングの設定
 	router := mux.NewRouter().StrictSlash(true)

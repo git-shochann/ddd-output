@@ -55,7 +55,7 @@ func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.Use
 
 	fmt.Println("SendAuthResponse!")
 
-	// これはどう呼び出せばいいいい？
+	// これはどう呼び出せばいい？
 	jwtToken, err := user.CreateJWTToken()
 	if err != nil {
 		return err
