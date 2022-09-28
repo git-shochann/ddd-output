@@ -24,3 +24,8 @@ type UserSignInValidation struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8,max=15,containsany=0123456789"`
 }
+
+type UserAuthResponse struct {
+	User     User // 埋め込み
+	JwtToken string
+}
