@@ -32,7 +32,10 @@ func main() {
 	loggingLogic.LoggingSetting()
 
 	// JWTの設定
+
 	jwtLogic := logic.NewJwtLogic()
+	fmt.Printf("jwtLogic: %t\n", jwtLogic)
+	fmt.Printf("jwtLogic: %v\n", jwtLogic)
 
 	// レスポンスの設定
 	responseLogic := logic.NewResponseLogic()
