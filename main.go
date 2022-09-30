@@ -34,11 +34,11 @@ func main() {
 	// JWTの設定
 
 	jwtLogic := logic.NewJwtLogic()
-	fmt.Printf("jwtLogic: %t\n", jwtLogic)
-	fmt.Printf("jwtLogic: %v\n", jwtLogic)
+	// fmt.Printf("jwtLogic: %t\n", jwtLogic)
+	// fmt.Printf("jwtLogic: %v\n", jwtLogic)
 
 	// レスポンスの設定
-	responseLogic := logic.NewResponseLogic()
+	responseLogic := logic.NewResponseLogic(jwtLogic)
 
 	// ルーティングの設定
 	router := mux.NewRouter().StrictSlash(true)

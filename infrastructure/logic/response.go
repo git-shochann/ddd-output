@@ -13,10 +13,14 @@ type ResponseLogic interface {
 	SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error
 }
 
-type responseLogic struct{}
+type responseLogic struct {
+	jwtLogic JwtLogic
+}
 
-func NewResponseLogic() ResponseLogic {
-	return &responseLogic{}
+func NewResponseLogic(jwtLogic JwtLogic) ResponseLogic {
+	return &responseLogic{
+		jwtLogic: jwtLogic,
+	}
 }
 
 // ステータスコード200の場合のレスポンス
@@ -56,7 +60,7 @@ func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.Use
 	fmt.Println("SendAuthResponse!")
 
 	// これはどう呼び出せばいい？
-	jwtToken, err := user.CreateJWTToken()
+	jwtToken, err := rl.jwtLogic.CreateJWTToken(user)
 	if err != nil {
 		return err
 	}
@@ -74,7 +78,7 @@ func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.Use
 	}
 	fmt.Printf("jsonResponse: %v\n", string(jsonResponse))
 
-	if err := SendResponse(w, jsonResponse, code); err != nil {
+	if err := rl.SendResponse(w, jsonResponse, code); err != nil {
 		return err
 	}
 
