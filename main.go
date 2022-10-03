@@ -21,7 +21,7 @@ func main() {
 
 	db := config.ConnectDB()
 
-	/* infrastructure層 */
+	/*** infrastructure層 ***/
 
 	// 暗号化パスワードの設定
 	encryptPasswordLogic := logic.NewEncryptPasswordLogic()
@@ -46,7 +46,7 @@ func main() {
 	habitPersistence := persistence.NewHabitPersistence(db)
 	// userPersistence := persistence.NewUserPersistence(db)
 
-	// usecase -> domain
+	/*** usecase層 ***/
 
 	// usecase層にinfrastructure層を渡す？ -> usecase層内でinfrastructure層のメソッドにアクセスできるように
 	habitUseCase := usecase.NewHabitUseCase(habitPersistence, habitValidation, encryptPasswordLogic, envLogic, jwtLogic, loggingLogic, responseLogic)
