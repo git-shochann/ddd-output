@@ -19,17 +19,23 @@ import (
 func main() {
 
 	// 依存関係を順番につなげていく
+
+	// infrastructure層に初期設定を渡す(技術的関心事の処理はinfrastructure層で実装する)
 	habitPersistence := persistence.NewHabitPersistence(config.ConnectDB()) // infrastructure層の設定
-	habitUseCase := usecase.NewHabitUseCase(habitPersistence)               // usecase -> domain
-	habitHandler := handler.NewHabitHandler(habitUseCase)                   // interface -> usecase
+
+	// usecase層にinfrastructure層を渡す？ -> メソッドにアクセスできるように
+	habitUseCase := usecase.NewHabitUseCase(habitPersistence) // usecase -> domain
+
+	// interface層にusecase層を渡す -> メソッドにアクセスできるように
+	habitHandler := handler.NewHabitHandler(habitUseCase) // interface -> usecase
 
 	// 環境変数の読み込み
-	envLogic := logic.NewEnvLogic()
-	envLogic.LoadEnv()
+	envLogic := logic.NewEnvLogic() // infrastructure層
+	// envLogic.LoadEnv()
 
 	// ログの設定
 	loggingLogic := logic.NewLoggingLogic()
-	loggingLogic.LoggingSetting()
+	// loggingLogic.LoggingSetting()
 
 	// JWTの設定
 
@@ -39,6 +45,14 @@ func main() {
 
 	// レスポンスの設定
 	responseLogic := logic.NewResponseLogic(jwtLogic)
+
+	// responseLogicは logic.ResponseLogic型(インターフェース型) で インターフェースのメソッドを利用することが出来る型
+
+	// で、このresponseLogicを渡したいのは、usecase層...？
+	// usecase層 -> infrastructure層にアクセスしたい！ は直接は出来ないので
+	// domain層 -> に、interfaceを置いて、窓口を作ってあげる
+
+	// usecase層にinfrastrcuture層を渡す
 
 	// ルーティングの設定
 	router := mux.NewRouter().StrictSlash(true)

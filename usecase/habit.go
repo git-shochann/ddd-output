@@ -3,6 +3,8 @@ package usecase
 import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
+	"log"
+	"net/http"
 )
 
 // habitの取得や登録などでDBにアクセスする時に、domain層のrepository(インターフェースとして設定した部分)を介してアクセスすることによって、infrastructure層にアクセスするのではなく、
@@ -38,22 +40,23 @@ func NewHabitUseCase(hr repository.HabitRepository) HabitUseCase {
 }
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu habitUseCase) CreateHabit(h *model.Habit) error {
+func (hu habitUseCase) CreateHabit(habit *model.Habit) error {
+
 	// 実際のDBの処理であるhu.CreateHabit() としてアクセスをすることが可能
 
-	// 	err = habit.CreateHabit()
-	// 	if err != nil {
-	// 		models.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
-	// 		log.Println(err)
-	// 		return
-	// 	}
+	err := hu.CreateHabit(habit)
+	if err != nil {
+		models.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
 
-	// 	response, err := json.Marshal(habit)
-	// 	if err != nil {
-	// 		models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-	// 		log.Println(err)
-	// 		return
-	// 	}
+	// response, err := json.Marshal(habit)
+	// if err != nil {
+	// 	models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+	// 	log.Println(err)
+	// 	return
+	// }
 
 	// 	models.SendResponse(w, response, http.StatusOK)
 
