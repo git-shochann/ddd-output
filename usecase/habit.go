@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"ddd/domain/logic"
 	"ddd/domain/model"
 	"ddd/domain/repository"
 	"log"
@@ -28,14 +29,22 @@ type HabitUseCase interface {
 
 // どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
-	HabitRepository repository.HabitRepository // domain層のインターフェース
+	HabitRepository      repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
+	EncryptPassWordLogic logic.EncryptPasswordLogic
+	EnvLogic             logic.EnvLogic
+	JwtLogic             logic.JwtLogic
+	LoggingLogic         logic.LoggingLogic
+	ResponseLogic        logic.ResponseLogic
 }
 
 // インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
-func NewHabitUseCase(hr repository.HabitRepository) HabitUseCase {
-	// なぜポインタ型？
+func NewHabitUseCase(hr repository.HabitRepository, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
 	return &habitUseCase{
-		HabitRepository: hr,
+		HabitRepository:      hr,
+		EncryptPassWordLogic: epl,
+		JwtLogic:             jl,
+		LoggingLogic:         ll,
+		ResponseLogic:        rl,
 	}
 }
 
