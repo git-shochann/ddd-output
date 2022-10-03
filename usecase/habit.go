@@ -4,6 +4,7 @@ import (
 	"ddd/domain/logic"
 	"ddd/domain/model"
 	"ddd/domain/repository"
+	"ddd/infrastructure/validator"
 	"log"
 	"net/http"
 )
@@ -30,6 +31,7 @@ type HabitUseCase interface {
 // どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
 	HabitRepository      repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
+	HabitValidation      validator.HabitValidation
 	EncryptPassWordLogic logic.EncryptPasswordLogic
 	EnvLogic             logic.EnvLogic
 	JwtLogic             logic.JwtLogic
@@ -38,9 +40,10 @@ type habitUseCase struct {
 }
 
 // インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
-func NewHabitUseCase(hr repository.HabitRepository, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
+func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
 	return &habitUseCase{
 		HabitRepository:      hr,
+		HabitValidation:      hv,
 		EncryptPassWordLogic: epl,
 		JwtLogic:             jl,
 		LoggingLogic:         ll,
@@ -55,9 +58,8 @@ func (hu habitUseCase) CreateHabit(habit *model.Habit) error {
 
 	err := hu.CreateHabit(habit)
 	if err != nil {
-		models.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
+		hu.ResponseLogic.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
 		log.Println(err)
-		return
 	}
 
 	// response, err := json.Marshal(habit)

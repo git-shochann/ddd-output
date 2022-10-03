@@ -4,6 +4,7 @@ import (
 	"ddd/config"
 	"ddd/infrastructure/logic"
 	"ddd/infrastructure/persistence"
+	"ddd/infrastructure/validator"
 	"ddd/interface/handler"
 	"ddd/usecase"
 	"fmt"
@@ -20,6 +21,8 @@ func main() {
 
 	db := config.ConnectDB()
 
+	/* infrastructure層 */
+
 	// 暗号化パスワードの設定
 	encryptPasswordLogic := logic.NewEncryptPasswordLogic()
 
@@ -35,40 +38,36 @@ func main() {
 	// レスポンスの設定
 	responseLogic := logic.NewResponseLogic(jwtLogic)
 
-	// ************
-	// responseLogicは logic.ResponseLogic型(インターフェース型) で インターフェースのメソッドを利用することが出来る型
-
-	// で、このresponseLogicを渡したいのは、usecase層...？
-	// usecase層 -> infrastructure層にアクセスしたい！ は直接は出来ないので
-	// domain層 -> に、interfaceを置いて、窓口を作ってあげる
-
-	// usecase層にinfrastrcuture層を渡す
-
-	// ************
-
-	// 依存関係を順番につなげていく
+	// バリデーションの設定
+	habitValidation := validator.NewHabitValidation()
+	// userValidation := validator.NewUserValidation()
 
 	// infrastructure層に初期設定を渡す(技術的関心事の処理はinfrastructure層で実装する)
-	habitPersistence := persistence.NewHabitPersistence(db) // infrastructure層の設定
+	habitPersistence := persistence.NewHabitPersistence(db)
 	// userPersistence := persistence.NewUserPersistence(db)
 
+	// usecase -> domain
+
 	// usecase層にinfrastructure層を渡す？ -> usecase層内でinfrastructure層のメソッドにアクセスできるように
-	habitUseCase := usecase.NewHabitUseCase(habitPersistence, encryptPasswordLogic, envLogic, jwtLogic, loggingLogic, responseLogic) // usecase -> domain
-	// userUseCase := usecase.NewHabitUseCase(userPersistence)
+	habitUseCase := usecase.NewHabitUseCase(habitPersistence, habitValidation, encryptPasswordLogic, envLogic, jwtLogic, loggingLogic, responseLogic)
+	// userUseCase := usecase.NewUserUseCase(userPersistence, userValidation, encryptPasswordLogic, envLogic, jwtLogic, loggingLogic, responseLogic)
 
 	// interface層にusecase層を渡す -> メソッドにアクセスできるように
 	habitHandler := handler.NewHabitHandler(habitUseCase) // interface -> usecase
-	// userHandler := handler.NewUserHandler(userUseCase)
+	// userHandler := handler.NewUserHandler(userUseCase)    // interface -> usecase
 
 	// ルーティングの設定
 	router := mux.NewRouter().StrictSlash(true)
-	// router.HandleFunc("/api/v1/signup", userHandler.SignupFunc).Methods("POST")
-	// router.HandleFunc("/api/v1/signin", userHandler.SigninFunc).Methods("POST")
+
+	//router.HandleFunc("/api/v1/signup", userHandler.SignUpFunc).Methods("POST")
+	// router.HandleFunc("/api/v1/signin", userHandler.SignInFunc).Methods("POST")
+
 	router.HandleFunc("/", habitHandler.IndexFunc).Methods("GET") // 引数に関数
-	// router.HandleFunc("/api/v1/get", habitHandler.GetAllHabitFunc).Methods("GET")
 	router.HandleFunc("/api/v1/create", habitHandler.CreateFunc).Methods("POST")
-	// router.HandleFunc("/api/v1/update/{id}", habitHandler.UpdateHabitFunc).Methods("PATCH")
-	// router.HandleFunc("/api/v1/delete/{id}", habitHandler.DeteteHabitFunc).Methods("DELETE")
+	// router.HandleFunc("/api/v1/update/{id}", habitHandler.UpdateFunc).Methods("PATCH")
+	// router.HandleFunc("/api/v1/delete/{id}", habitHandler.DeleteFunc).Methods("DELETE")
+	// router.HandleFunc("/api/v1/get", habitHandler.GetAllHabitFunc).Methods("GET")
+
 	fmt.Println("Start Server!")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

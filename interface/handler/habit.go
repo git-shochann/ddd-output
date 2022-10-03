@@ -14,11 +14,12 @@ import (
 // usecase層と切り離すことでリクエストやレスポンスの形に変わってもinterface層の修正だけで済むようになる...？
 
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
-// Publicで宣言
 type HabitHandler interface {
 	IndexFunc(http.ResponseWriter, *http.Request)
 	CreateFunc(http.ResponseWriter, *http.Request)
-	// Update(http.ResponseWriter, *http.Request)
+	// UpdateFunc(http.ResponseWriter, *http.Request)
+	// DeleteFunc(http.ResponseWriter, *http.Request)
+	// GetAllHabitFunc(http.ResponseWriter, *http.Request)
 }
 
 // これはこの後記載するメソッドの型として、設定するために作成する
@@ -28,20 +29,20 @@ type habitHandler struct {
 }
 
 // main関数で依存関係同士で繋ぐために必要
-func NewHabitHandler(hu usecase.HabitUseCase) HabitHandler {
+func NewHabitHandler(huc usecase.HabitUseCase) HabitHandler {
 	return &habitHandler{
-		HabitUseCase: hu,
+		HabitUseCase: huc,
 	}
 }
 
 // 第一引数にはHTTPサーバーからのレスポンスを出力することが出来るメソッドを持っている(該当のメソッドを実装している)構造体の値が来る
-func (hh habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
+func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("r.Body: %v\n", r.Body)
 	fmt.Printf("%T\n", w)                   // *http.response構造体
 	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
 }
 
-func (hh habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
+func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// Bodyを検証
 	reqBody, err := ioutil.ReadAll(r.Body)
@@ -62,13 +63,13 @@ func (hh habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 実際にバリデーションを行う
 
-	// errorMessage, err := habitValidation.CreateHabitValidator()
+	errorMessage, err := habitValidation.CreateHabitValidator()
 
-	// 	if err != nil {
-	// 		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
-	// 		log.Println(err)
-	// 		return
-	// 	}
+	if err != nil {
+		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
 	// UseCase層の呼び出しを行う
 
