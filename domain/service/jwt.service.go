@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-// ここの層はinterfaceを提供するのみでOK！
+// ここの層はinterfaceを提供するのみでOK！(DDDの場合)
 
 type JwtLogic interface {
 	CreateJWTToken(u *model.User) (string, error)
