@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// ここの層はinterfaceを提供するのみでOK！(DDDの場合)
+
 type ResponseLogic interface {
 	SendResponse(w http.ResponseWriter, response []byte, code int) error
 	SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error

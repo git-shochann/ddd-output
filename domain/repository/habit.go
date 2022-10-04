@@ -2,7 +2,7 @@ package repository
 
 import "ddd/domain/model"
 
-// ここの層はinterfaceを提供するのみでOK！
+// ここの層はinterfaceを提供するのみでOK！ (DDDの場合)
 
 type HabitRepository interface {
 	CreateHabit(h *model.Habit) error
