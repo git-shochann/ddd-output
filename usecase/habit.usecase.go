@@ -5,6 +5,7 @@ import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
 	"ddd/infrastructure/validator"
+	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -20,6 +21,7 @@ type HabitUseCase interface {
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
+	// ここにJWTのロジックを使用する関数を追加してあげる
 }
 
 // これはなに？ -> ここの層でやることを構造体で表現する。
@@ -55,6 +57,23 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 func (hu *habitUseCase) CreateHabit(habit *model.Habit) error {
 
 	// 実際のDBの処理であるhu.CreateHabit() としてアクセスをすることが可能
+
+	// バリデーションの事前設定
+	var habitValidation model.CreateHabitValidation
+	err = json.Unmarshal(reqBody, &habitValidation)
+	if err != nil {
+		// models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
+	errorMessage, err := habitValidation.CreateHabitValidator()
+
+	if err != nil {
+		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
 	err := hu.CreateHabit(habit)
 	if err != nil {

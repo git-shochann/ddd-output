@@ -13,8 +13,8 @@ import (
 )
 
 type JwtLogic interface {
-	CreateJWTToken(u *model.User) (string, error)
-	CheckJWTToken(r *http.Request) (int, error)
+	CreateJWTTokenLogic(u *model.User) (string, error)
+	CheckJWTTokenLogic(r *http.Request) (int, error)
 }
 
 type jwtLogic struct{}
@@ -25,7 +25,7 @@ func NewJwtLogic() JwtLogic {
 
 // 新規登録が成功したらトークンを発行してレスポンスに含める。
 // Userと紐づいているのでメソッドでOK。
-func (jl jwtLogic) CreateJWTToken(u *model.User) (string, error) {
+func (jl jwtLogic) CreateJWTTokenLogic(u *model.User) (string, error) {
 
 	// クレームの作成
 	claim := jwt.MapClaims{
@@ -47,7 +47,7 @@ func (jl jwtLogic) CreateJWTToken(u *model.User) (string, error) {
 }
 
 // リクエスト時のJWTTokenの検証
-func (jl jwtLogic) CheckJWTToken(r *http.Request) (int, error) {
+func (jl jwtLogic) CheckJWTTokenLogic(r *http.Request) (int, error) {
 
 	// リクエスト構造体を渡す -> リクエストヘッダーの取得する
 

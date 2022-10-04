@@ -3,7 +3,6 @@ package handler
 import (
 	"ddd/domain/model"
 	"ddd/usecase"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -44,6 +43,17 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
+	// usecase層に依存するので、UseCase層でJWTのロジックを使用するインターフェースを用意する
+	// 必要がある
+
+	// JWTの検証
+	userID, err := models.CheckJWTToken(r)
+	if err != nil {
+		models.SendErrorResponse(w, "Authentication error", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
 	// Bodyを検証
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -52,40 +62,40 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// バリデーションの事前設定
-	var habitValidation model.CreateHabitValidation
-	err = json.Unmarshal(reqBody, &habitValidation)
-	if err != nil {
-		// models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		log.Println(err)
-		return
+	// 保存準備(JWTにIDが乗っているので、IDをもとに保存処理をする)
+
+	habit := model.Habit{
+		Content: habitValidation.Content,
+		UserID:  userID,
 	}
 
-	// 実際にバリデーションを行う
+	// 保存処理をする
+	// メソッドのレシーバ.フィールド.メソッドへのアクセス
+	hh.HabitUseCase.CreateHabit(&habit)
 
-	errorMessage, err := habitValidation.CreateHabitValidator()
-
-	if err != nil {
-		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
-		log.Println(err)
-		return
-	}
-
-	// UseCase層の呼び出しを行う
-
-	// 	// JWTの検証
-	// 	userID, err := models.CheckJWTToken(r)
-	// 	if err != nil {
-	// 		models.SendErrorResponse(w, "Authentication error", http.StatusBadRequest)
-	// 		log.Println(err)
-	// 		return
-	// 	}
-
-	// 	// JWTにIDが乗っているので、IDをもとに保存処理をする
-
-	// 	habit := models.Habit{
-	// 		Content: habitValidation.Content,
-	// 		UserID:  userID,
-	//
+	// レスポンス
+	models.SendResponse(w, response, http.StatusOK)
 
 }
+
+// 参考 //
+
+// ここのファイルは具体的なロジックを書くのは発生しない //
+
+// func (tc *todoController) CreateTodo(w http.ResponseWriter, r *http.Request) {
+
+// 	// トークンからuserIdを取得
+// 	userId, err := tc.as.GetUserIdFromToken(w, r)
+// 	if userId == 0 || err != nil {
+// 		return
+// 	}
+
+// 	// todoデータ取得処理
+// 	responseTodo, err := tc.ts.CreateTodo(w, r, userId)
+// 	if err != nil {
+// 		return
+// 	}
+
+// 	// レスポンス送信処理
+// 	tc.ts.SendCreateTodoResponse(w, &responseTodo)
+// }
