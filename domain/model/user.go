@@ -2,6 +2,9 @@ package model
 
 import "github.com/jinzhu/gorm"
 
+// 業務領域(このソフトウェアが解決、扱うもの)に関するコードをこのdomain層に置く
+// 他のレイヤーに依存することはない
+
 type User struct {
 	gorm.Model         // ID, CreatedAt, UpdatedAt, DeletedAt を作成
 	FirstName  string  `gorm:"not null"`

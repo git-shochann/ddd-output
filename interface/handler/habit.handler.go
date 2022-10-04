@@ -4,8 +4,6 @@ import (
 	"ddd/domain/model"
 	"ddd/usecase"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -24,13 +22,16 @@ type HabitHandler interface {
 // これはこの後記載するメソッドの型として、設定するために作成する
 // Privateで宣言 ここのパッケージ以外では使用しないので
 type habitHandler struct {
-	HabitUseCase usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
+	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
+	juc usecase.JwtUseCase
 }
 
 // main関数で依存関係同士で繋ぐために必要
-func NewHabitHandler(huc usecase.HabitUseCase) HabitHandler {
+// ここの構造体のフィールドに書くのは、依存先のインターフェースを書けばOK
+func NewHabitHandler(huc usecase.HabitUseCase, juc usecase.JwtUseCase) HabitHandler {
 	return &habitHandler{
-		HabitUseCase: huc,
+		huc: huc,
+		juc: juc,
 	}
 }
 
@@ -47,18 +48,8 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 必要がある
 
 	// JWTの検証
-	userID, err := models.CheckJWTToken(r)
+	userID, err := hh.juc.CheckJWTToken(w, r)
 	if err != nil {
-		models.SendErrorResponse(w, "Authentication error", http.StatusBadRequest)
-		log.Println(err)
-		return
-	}
-
-	// Bodyを検証
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		// models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -69,8 +60,8 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		UserID:  userID,
 	}
 
-	// 保存処理をする
-	// メソッドのレシーバ.フィールド.メソッドへのアクセス
+	// 保存処理(この中でBodyの検証、バリデーションの実行を行う)
+
 	hh.HabitUseCase.CreateHabit(&habit)
 
 	// レスポンス

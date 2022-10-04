@@ -1,9 +1,10 @@
 package usecase
 
 import (
-	"ddd/domain/logic"
 	"ddd/domain/model"
 	"ddd/domain/repository"
+	"ddd/domain/service"
+	"ddd/infrastructure/logic"
 	"ddd/infrastructure/validator"
 	"encoding/json"
 	"log"
@@ -22,6 +23,7 @@ type HabitUseCase interface {
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 	// ここにJWTのロジックを使用する関数を追加してあげる
+	// CheckJWTToken
 }
 
 // これはなに？ -> ここの層でやることを構造体で表現する。
@@ -34,11 +36,11 @@ type HabitUseCase interface {
 type habitUseCase struct {
 	HabitRepository      repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
 	HabitValidation      validator.HabitValidation
-	EncryptPassWordLogic logic.EncryptPasswordLogic
-	EnvLogic             logic.EnvLogic
-	JwtLogic             logic.JwtLogic
-	LoggingLogic         logic.LoggingLogic
-	ResponseLogic        logic.ResponseLogic
+	EncryptPassWordLogic service.EncryptPasswordLogic
+	EnvLogic             service.EnvLogic
+	JwtLogic             service.JwtLogic
+	LoggingLogic         service.LoggingLogic
+	ResponseLogic        service.ResponseLogic
 }
 
 // インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
