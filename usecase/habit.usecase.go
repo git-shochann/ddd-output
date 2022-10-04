@@ -18,19 +18,13 @@ import (
 
 // インターフェース -> 窓口である
 type HabitUseCase interface {
-	CreateHabit(h *model.Habit) error
+	CreateHabit(w http.ResponseWriter, r *http.Request, habit *model.Habit) error
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 	// ここにJWTのロジックを使用する関数を追加してあげる
 	// CheckJWTToken
 }
-
-// これはなに？ -> ここの層でやることを構造体で表現する。
-// usecase層の関数をメソッドとして定義し、
-// 構造体のフィールド内にインターフェース型として設定すれば、インターフェースはメソッドを使用することの出来る窓口であるので、
-// いつでもそのメソッドを使うことが出来る
-// その使うことが出来るメソッドは domain層のインターフェースで設定したインターフェース。
 
 // どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
@@ -57,7 +51,7 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 }
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(habit *model.Habit) error {
+func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, habit *model.Habit) error {
 
 	// 実際のDBの処理であるhu.CreateHabit() としてアクセスをすることが可能
 
@@ -78,9 +72,9 @@ func (hu *habitUseCase) CreateHabit(habit *model.Habit) error {
 		return
 	}
 
-	err := hu.CreateHabit(habit)
+	err := hu.hr.CreateHabitPersistence(habit)
 	if err != nil {
-		hu.ResponseLogic.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
+		hu.rl.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
 		log.Println(err)
 	}
 

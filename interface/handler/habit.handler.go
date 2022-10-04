@@ -55,6 +55,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 保存準備(JWTにIDが乗っているので、IDをもとに保存処理をする)
 
+	// これは？
 	habit := model.Habit{
 		Content: habitValidation.Content,
 		UserID:  userID,
@@ -62,10 +63,10 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 保存処理(この中でBodyの検証、バリデーションの実行を行う)
 
-	hh.HabitUseCase.CreateHabit(&habit)
+	hh.huc.CreateHabit(w, r, &habit)
 
 	// レスポンス
-	models.SendResponse(w, response, http.StatusOK)
+	//  models.SendResponse(w, response, http.StatusOK)
 
 }
 
