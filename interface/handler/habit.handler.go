@@ -14,8 +14,8 @@ import (
 
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
 type HabitHandler interface {
-	IndexFunc(http.ResponseWriter, *http.Request)
-	CreateFunc(http.ResponseWriter, *http.Request)
+	IndexFunc(w http.ResponseWriter, r *http.Request)
+	CreateFunc(w http.ResponseWriter, r *http.Request)
 	// UpdateFunc(http.ResponseWriter, *http.Request)
 	// DeleteFunc(http.ResponseWriter, *http.Request)
 	// GetAllHabitFunc(http.ResponseWriter, *http.Request)
