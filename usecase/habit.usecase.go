@@ -34,24 +34,25 @@ type HabitUseCase interface {
 
 // どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
-	HabitRepository      repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
-	HabitValidation      validator.HabitValidation
-	EncryptPassWordLogic service.EncryptPasswordLogic
-	EnvLogic             service.EnvLogic
-	JwtLogic             service.JwtLogic
-	LoggingLogic         service.LoggingLogic
-	ResponseLogic        service.ResponseLogic
+	hr  repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
+	hv  validator.HabitValidation
+	epl service.EncryptPasswordLogic
+	el  service.EnvLogic
+	jl  service.JwtLogic
+	ll  service.LoggingLogic
+	rl  service.ResponseLogic
 }
 
 // インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
 func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
 	return &habitUseCase{
-		HabitRepository:      hr,
-		HabitValidation:      hv,
-		EncryptPassWordLogic: epl,
-		JwtLogic:             jl,
-		LoggingLogic:         ll,
-		ResponseLogic:        rl,
+		hr:  hr,
+		hv:  hv,
+		epl: epl,
+		el:  el,
+		jl:  jl,
+		ll:  ll,
+		rl:  rl,
 	}
 }
 

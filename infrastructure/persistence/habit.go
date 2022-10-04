@@ -25,7 +25,7 @@ func NewHabitPersistence(conn *gorm.DB) repository.HabitRepository {
 }
 
 // habitPersistence構造体のメソッドとして定義する
-func (h habitPersistence) CreateHabit(habit *model.Habit) error {
+func (h *habitPersistence) CreateHabitPersistence(habit *model.Habit) error {
 
 	// DB接続の用意
 	db := h.Conn
@@ -38,7 +38,7 @@ func (h habitPersistence) CreateHabit(habit *model.Habit) error {
 
 }
 
-func (h habitPersistence) DeleteHabit(habitID, userID int, habit *model.Habit) error {
+func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *model.Habit) error {
 
 	// DB接続の用意
 	db := h.Conn
@@ -59,7 +59,7 @@ func (h habitPersistence) DeleteHabit(habitID, userID int, habit *model.Habit) e
 	return nil
 }
 
-func (h habitPersistence) UpdateHabit(habit *model.Habit) error {
+func (h *habitPersistence) UpdateHabitPersistence(habit *model.Habit) error {
 
 	db := h.Conn
 
@@ -80,7 +80,7 @@ func (h habitPersistence) UpdateHabit(habit *model.Habit) error {
 
 //実体を受け取って、実体を書き換えるので、戻り値に指定する必要はない。
 // 旧: 値渡し, 新: ポインタを受け取る！s
-func (h habitPersistence) GetAllHabitByUserID(user model.User, habit *[]model.Habit) error {
+func (h *habitPersistence) GetAllHabitByUserIDPersistence(user model.User, habit *[]model.Habit) error {
 
 	// habitテーブル内の外部キーであるuseridで全てを取得する
 	// fmt.Printf("u.ID: %v\n", u.ID)     // 1

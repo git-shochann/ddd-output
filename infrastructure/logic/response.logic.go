@@ -14,12 +14,12 @@ type ResponseLogic interface {
 }
 
 type responseLogic struct {
-	jwtLogic JwtLogic
+	jl JwtLogic
 }
 
-func NewResponseLogic(jwtLogic JwtLogic) ResponseLogic {
+func NewResponseLogic(jl JwtLogic) ResponseLogic {
 	return &responseLogic{
-		jwtLogic: jwtLogic,
+		jl: jl,
 	}
 }
 
@@ -60,7 +60,7 @@ func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.Use
 	fmt.Println("SendAuthResponse!")
 
 	// このように呼び出す
-	jwtToken, err := rl.jwtLogic.CreateJWTToken(user)
+	jwtToken, err := rl.jl.CreateJWTTokenLogic(user)
 	if err != nil {
 		return err
 	}
