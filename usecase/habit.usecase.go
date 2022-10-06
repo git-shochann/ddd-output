@@ -1,3 +1,5 @@
+// infrastructure
+
 package usecase
 
 import (
@@ -7,6 +9,7 @@ import (
 	"ddd/infrastructure/logic"
 	"ddd/infrastructure/validator"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -18,7 +21,7 @@ import (
 
 // インターフェース -> 窓口である
 type HabitUseCase interface {
-	CreateHabit(w http.ResponseWriter, r *http.Request, habit *model.Habit) error
+	CreateHabit(w http.ResponseWriter, r *http.Request, userId int) error
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
@@ -51,25 +54,32 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 }
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, habit *model.Habit) error {
+func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, userID int) error {
 
-	// 実際のDBの処理であるhu.CreateHabit() としてアクセスをすることが可能
+	// Bodyの読み込み
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		hu.rl.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		// 返すのはerrでOK -> この関数を呼び出すところのエラーハンドリングで使用するため
+		return err
+	}
 
 	// バリデーションの事前設定
 	var habitValidation model.CreateHabitValidation
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
-		// models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hu.rl.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		log.Println(err)
-		return
+		return err
 	}
 
 	errorMessage, err := habitValidation.CreateHabitValidator()
 
 	if err != nil {
-		models.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		hu.rl.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		log.Println(err)
-		return
+		return err
 	}
 
 	err := hu.hr.CreateHabitPersistence(habit)

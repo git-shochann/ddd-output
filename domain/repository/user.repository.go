@@ -1,3 +1,5 @@
+// domain
+
 package repository
 
 import "ddd/domain/model"

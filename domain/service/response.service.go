@@ -1,3 +1,5 @@
+// domain
+
 package service
 
 import (

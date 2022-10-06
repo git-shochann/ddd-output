@@ -1,7 +1,8 @@
+// interface
+
 package handler
 
 import (
-	"ddd/domain/model"
 	"ddd/usecase"
 	"fmt"
 	"net/http"
@@ -24,6 +25,7 @@ type HabitHandler interface {
 type habitHandler struct {
 	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
 	juc usecase.JwtUseCase
+	ruc usecase.ResponseUseCase
 }
 
 // main関数で依存関係同士で繋ぐために必要
@@ -42,6 +44,9 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
 }
 
+// ** ここのファイルは具体的なロジックを書くのは発生しない ** //
+
+// main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// usecase層に依存するので、UseCase層でJWTのロジックを使用するインターフェースを用意する
@@ -50,29 +55,31 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.juc.CheckJWTToken(w, r)
 	if err != nil {
-		return
+		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
 	// 保存準備(JWTにIDが乗っているので、IDをもとに保存処理をする)
 
-	// これは？
-	habit := model.Habit{
-		Content: habitValidation.Content,
-		UserID:  userID,
+	// これは..？
+	// habit := model.Habit{
+	// 	Content: habitValidation.Content,
+	// 	UserID:  userID,
+	// }
+
+	// 保存処理 -> ここでBodyの検証、バリデーションの実行
+
+	err = hh.huc.CreateHabit(w, r, userID)
+	if err != nil {
+		return
 	}
 
-	// 保存処理(この中でBodyの検証、バリデーションの実行を行う)
-
-	hh.huc.CreateHabit(w, r, &habit)
-
 	// レスポンス
-	//  models.SendResponse(w, response, http.StatusOK)
+	hh.ruc.SendResponseUseCase()
+	// models.SendResponse(w, response, http.StatusOK)
 
 }
 
 // 参考 //
-
-// ここのファイルは具体的なロジックを書くのは発生しない //
 
 // func (tc *todoController) CreateTodo(w http.ResponseWriter, r *http.Request) {
 

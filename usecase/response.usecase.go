@@ -1,12 +1,17 @@
+// usecase
+
 package usecase
 
-import "ddd/infrastructure/logic"
+import (
+	"ddd/infrastructure/logic"
+	"net/http"
+)
 
 // 1. 以下のメソッドを使いたい層のためにインターフェースをまずは書く
 type ResponseUseCase interface {
-	SendResponse()
-	SendErrorResponse()
-	SendAuthResponse()
+	SendResponseUseCase(w http.ResponseWriter, r *http.Request)
+	SendErrorResponseUseCase()
+	SendAuthResponseUseCase()
 }
 
 // 2. ここの層から見た直接依存する先のインターフェース型をフィールドとして設定する -> ここではdomain層
@@ -17,7 +22,7 @@ type responseUseCase struct {
 
 // 3. １で作成したインターフェースを戻り値として設定して提供できるようにする
 //    引数には、ここの層から見た直接依存する先のインターフェース型をフィールドとして設定する
-//    main関数で繋げる -> みて確認！
+//    main関数で依存関係を繋げる
 func NewResponseUseCase(rl logic.ResponseLogic) ResponseUseCase {
 	return &responseUseCase{
 		rl: rl,
@@ -25,8 +30,10 @@ func NewResponseUseCase(rl logic.ResponseLogic) ResponseUseCase {
 }
 
 // 4. 実際にメソッドを書いていく
-func (ruc *responseUseCase) SendResponse() {}
+func (ruc *responseUseCase) SendResponseUseCase(w http.ResponseWriter, r *http.Request, response []byte) {
+	ruc.rl.SendResponseLogic()
+}
 
-func (ruc *responseUseCase) SendErrorResponse() {}
+func (ruc *responseUseCase) SendErrorResponseUseCase() {}
 
-func (ruc *responseUseCase) SendAuthResponse() {}
+func (ruc *responseUseCase) SendAuthResponseUseCase() {}
