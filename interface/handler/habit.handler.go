@@ -68,14 +68,15 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 保存処理 -> ここでBodyの検証、バリデーションの実行
 
-	err = hh.huc.CreateHabit(w, r, userID)
+	response, err = hh.huc.CreateHabit(w, r, userID)
 	if err != nil {
 		return
 	}
 
+	// *** 結果以下でレスポンスを作成するのでusecase内の、処理ではレスポンスの構造体を返す ***
+
 	// レスポンス
-	hh.ruc.SendResponseUseCase()
-	// models.SendResponse(w, response, http.StatusOK)
+	hh.ruc.SendResponseUseCase(w, response, http.StatusOK)
 
 }
 
@@ -90,6 +91,9 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 // 	}
 
 // 	// todoデータ取得処理
+
+// 以下の処理内でのResponseはどんな感じ？
+
 // 	responseTodo, err := tc.ts.CreateTodo(w, r, userId)
 // 	if err != nil {
 // 		return

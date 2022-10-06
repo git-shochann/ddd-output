@@ -80,7 +80,7 @@ func (rl *responseLogic) SendAuthResponseLogic(w http.ResponseWriter, user *mode
 	}
 	fmt.Printf("jsonResponse: %v\n", string(jsonResponse))
 
-	if err := rl.SendResponse(w, jsonResponse, code); err != nil {
+	if err := rl.SendResponseLogic(w, jsonResponse, code); err != nil {
 		return err
 	}
 
