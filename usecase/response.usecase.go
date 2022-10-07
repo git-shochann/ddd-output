@@ -4,6 +4,7 @@ package usecase
 
 import (
 	"ddd/infrastructure/logic"
+	"log"
 	"net/http"
 )
 
@@ -33,7 +34,9 @@ func NewResponseUseCase(rl logic.ResponseLogic) ResponseUseCase {
 func (ruc *responseUseCase) SendResponseUseCase(w http.ResponseWriter, response []byte, code int) {
 	err := ruc.rl.SendResponseLogic(w, response, code)
 	if err != nil {
-		ruc.rl.SendErrorResponseLogic()
+		log.Println(err)
+		ruc.rl.SendErrorResponseLogic(w, "something wrong", http.StatusBadRequest)
+		return
 	}
 }
 

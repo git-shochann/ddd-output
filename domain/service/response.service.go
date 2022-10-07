@@ -10,7 +10,7 @@ import (
 // ここの層はinterfaceを提供するのみでOK！(DDDの場合)
 
 type ResponseLogic interface {
-	SendResponse(w http.ResponseWriter, response []byte, code int) error
-	SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error
-	SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error
+	SendResponseLogic(w http.ResponseWriter, response []byte, code int) error
+	SendErrorResponseLogic(w http.ResponseWriter, errorMessage string, code int) error
+	SendAuthResponseLogic(w http.ResponseWriter, user *model.User, code int) error
 }

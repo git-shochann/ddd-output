@@ -1,4 +1,4 @@
-// infrastructure
+// usecase
 
 package usecase
 
