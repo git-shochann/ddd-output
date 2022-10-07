@@ -53,7 +53,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 必要がある
 
 	// JWTの検証
-	userID, err := hh.juc.CheckJWTToken(w, r)
+	userID, err := hh.juc.CheckJWTTokenUseCase(w, r)
 	if err != nil {
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}

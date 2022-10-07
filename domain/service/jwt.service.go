@@ -8,6 +8,6 @@ import (
 // ここの層はinterfaceを提供するのみでOK！(DDDの場合)
 
 type JwtLogic interface {
-	CreateJWTToken(u *model.User) (string, error)
-	CheckJWTToken(r *http.Request) (int, error)
+	CreateJWTTokenLogic(u *model.User) (string, error)
+	CheckJWTTokenLogic(r *http.Request) (int, error)
 }

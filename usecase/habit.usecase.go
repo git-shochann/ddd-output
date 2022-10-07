@@ -21,7 +21,7 @@ import (
 
 // インターフェース -> 窓口である
 type HabitUseCase interface {
-	CreateHabit(w http.ResponseWriter, r *http.Request, userId int) error
+	CreateHabit(w http.ResponseWriter, r *http.Request, userId int) (*model.Habit, error)
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
@@ -54,24 +54,27 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 }
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, userID int) error {
+func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, userID int) (*model.Habit, error) {
 
 	// Bodyの読み込み
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-		hu.rl.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		// 返すのはerrでOK -> この関数を呼び出すところのエラーハンドリングで使用するため
-		return err
+
+		// logicではなくない...? -> usecase -> domain <- infrastructure
+
+		// hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
+		// 返すのはnilとerrでOK -> この関数を呼び出すinteface層のエラーハンドリングで使用するので
+		return nil, err
 	}
 
 	// バリデーションの事前設定
 	var habitValidation model.CreateHabitValidation
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
-		hu.rl.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	errorMessage, err := habitValidation.CreateHabitValidator()
@@ -79,13 +82,14 @@ func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, user
 	if err != nil {
 		hu.rl.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	err := hu.hr.CreateHabitPersistence(habit)
 	if err != nil {
 		hu.rl.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
 		log.Println(err)
+		return nil, err
 	}
 
 	// response, err := json.Marshal(habit)

@@ -10,7 +10,7 @@ import (
 
 // 1. 以下のメソッドを使いたい層のためにインターフェースをまずは書く
 type ResponseUseCase interface {
-	SendResponseUseCase(w http.ResponseWriter, response []byte, code int)
+	SendResponseUseCase(w http.ResponseWriter, response []byte, code int) error
 	SendErrorResponseUseCase()
 	SendAuthResponseUseCase()
 }
@@ -31,13 +31,14 @@ func NewResponseUseCase(rl logic.ResponseLogic) ResponseUseCase {
 }
 
 // 4. 実際にメソッドを書いていく
-func (ruc *responseUseCase) SendResponseUseCase(w http.ResponseWriter, response []byte, code int) {
+func (ruc *responseUseCase) SendResponseUseCase(w http.ResponseWriter, response []byte, code int) error {
 	err := ruc.rl.SendResponseLogic(w, response, code)
 	if err != nil {
 		log.Println(err)
 		ruc.rl.SendErrorResponseLogic(w, "something wrong", http.StatusBadRequest)
-		return
+		return err
 	}
+	return nil
 }
 
 func (ruc *responseUseCase) SendErrorResponseUseCase() {}
