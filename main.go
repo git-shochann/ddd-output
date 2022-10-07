@@ -56,7 +56,8 @@ func main() {
 	habitHandler := handler.NewHabitHandler(habitUseCase) // interface -> usecase
 	// userHandler := handler.NewUserHandler(userUseCase)    // interface -> usecase
 
-	// ルーティングの設定
+	/*** ルーティングの設定 ***/
+
 	router := mux.NewRouter().StrictSlash(true)
 
 	//router.HandleFunc("/api/v1/signup", userHandler.SignUpFunc).Methods("POST")

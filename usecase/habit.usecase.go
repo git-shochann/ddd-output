@@ -60,10 +60,9 @@ func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, user
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-
-		// logicではなくない...? -> usecase -> domain <- infrastructure
-
-		// hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
+		// 参考repoでここのエラーレスポンスはどこの層を呼び出して実行しているか
+		// 結論: 普通にインフラ層呼べば良くない？ という結論
+		hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
 		// 返すのはnilとerrでOK -> この関数を呼び出すinteface層のエラーハンドリングで使用するので
 		return nil, err
 	}
@@ -80,14 +79,14 @@ func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, user
 	errorMessage, err := habitValidation.CreateHabitValidator()
 
 	if err != nil {
-		hu.rl.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		hu.rl.SendErrorResponseLogic(w, errorMessage, http.StatusBadRequest)
 		log.Println(err)
 		return nil, err
 	}
 
 	err := hu.hr.CreateHabitPersistence(habit)
 	if err != nil {
-		hu.rl.SendErrorResponse(w, "Failed to create habit", http.StatusInternalServerError)
+		hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)
 		log.Println(err)
 		return nil, err
 	}

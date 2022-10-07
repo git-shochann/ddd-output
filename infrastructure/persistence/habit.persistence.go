@@ -1,4 +1,5 @@
-// persistence -> 永続性
+// infrastructure
+
 package persistence
 
 import (
