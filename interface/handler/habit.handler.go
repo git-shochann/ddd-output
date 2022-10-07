@@ -1,10 +1,11 @@
-// interface
+// interface (usecaseに依存)
 
 package handler
 
 import (
 	"ddd/usecase"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -25,7 +26,7 @@ type HabitHandler interface {
 type habitHandler struct {
 	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
 	juc usecase.JwtUseCase
-	ruc usecase.ResponseUseCase
+	// ruc usecase.ResponseUseCase
 }
 
 // main関数で依存関係同士で繋ぐために必要
@@ -55,6 +56,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.juc.CheckJWTTokenUseCase(w, r)
 	if err != nil {
+		log.Println(err)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
@@ -76,7 +78,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// *** 結果以下でレスポンスを作成するのでusecase内の、処理ではレスポンスの構造体を返す ***
 
 	// レスポンス
-	hh.ruc.SendResponseUseCase(w, response, http.StatusOK)
+	// hh.ruc.SendResponseUseCase(w, response, http.StatusOK)
 
 }
 

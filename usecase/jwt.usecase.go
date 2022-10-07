@@ -1,3 +1,5 @@
+// usecase (domainに依存)
+
 package usecase
 
 import (

@@ -1,3 +1,5 @@
+// usecase (domainに依存)
+
 package usecase
 
 // 1.まず何のメソッドを定義して、直接usecase層に依存するところ(interface層)で使いたいか？

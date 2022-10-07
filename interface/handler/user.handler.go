@@ -1,3 +1,5 @@
+// interface (usecaseに依存)
+
 package handler
 
 // 1. まず何のメソッドを定義して、直接interface層に依存するところ(main関数)で使いたいか？

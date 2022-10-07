@@ -1,4 +1,4 @@
-// usecase
+// usecase (domainに依存)
 
 package usecase
 
@@ -52,6 +52,8 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 		rl:  rl,
 	}
 }
+
+// WIP: ここで引数にhttp.ResponseWriterが来ることはない
 
 // domainのインターフェースを使って、実際に処理を行う
 func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, userID int) (*model.Habit, error) {
