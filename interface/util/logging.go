@@ -1,6 +1,6 @@
-// infrastructure層でいいのか？
+// interface層
 
-package logic
+package util
 
 import (
 	"io"

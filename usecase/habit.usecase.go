@@ -9,7 +9,6 @@ import (
 	"ddd/infrastructure/logic"
 	"ddd/infrastructure/validator"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -56,18 +55,7 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 // WIP: ここで引数にhttp.ResponseWriterが来ることはない
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(w http.ResponseWriter, r *http.Request, userID int) (*model.Habit, error) {
-
-	// Bodyの読み込み
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err)
-		// 参考repoでここのエラーレスポンスはどこの層を呼び出して実行しているか
-		// 結論: 普通にインフラ層呼べば良くない？ という結論
-		hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
-		// 返すのはnilとerrでOK -> この関数を呼び出すinteface層のエラーハンドリングで使用するので
-		return nil, err
-	}
+func (hu *habitUseCase) CreateHabit(userID int) (*model.Habit, error) {
 
 	// バリデーションの事前設定
 	var habitValidation model.CreateHabitValidation

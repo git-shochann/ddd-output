@@ -1,4 +1,6 @@
-package logic
+// interface層
+
+package util
 
 import (
 	"ddd/domain/model"
@@ -12,20 +14,20 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type JwtLogic interface {
-	CreateJWTTokenLogic(u *model.User) (string, error)
-	CheckJWTTokenLogic(r *http.Request) (int, error)
+type JwtUtil interface {
+	CreateJWTToken(u *model.User) (string, error)
+	CheckJWTToken(r *http.Request) (int, error)
 }
 
 type jwtLogic struct{}
 
-func NewJwtLogic() JwtLogic {
+func NewJwtLogic() JwtUtil {
 	return &jwtLogic{}
 }
 
 // 新規登録が成功したらトークンを発行してレスポンスに含める。
 // Userと紐づいているのでメソッドでOK。
-func (jl jwtLogic) CreateJWTTokenLogic(u *model.User) (string, error) {
+func (jl jwtLogic) CreateJWTToken(u *model.User) (string, error) {
 
 	// クレームの作成
 	claim := jwt.MapClaims{
@@ -47,7 +49,7 @@ func (jl jwtLogic) CreateJWTTokenLogic(u *model.User) (string, error) {
 }
 
 // リクエスト時のJWTTokenの検証
-func (jl jwtLogic) CheckJWTTokenLogic(r *http.Request) (int, error) {
+func (jl jwtLogic) CheckJWTToken(r *http.Request) (int, error) {
 
 	// リクエスト構造体を渡す -> リクエストヘッダーの取得する
 

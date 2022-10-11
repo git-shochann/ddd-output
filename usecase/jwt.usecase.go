@@ -10,7 +10,7 @@ import (
 // 一旦JWTの認証を引き受けるusecaseとして実装する
 
 type JwtUseCase interface {
-	CheckJWTTokenUseCase(w http.ResponseWriter, r *http.Request) (int, error)
+	CheckJWTTokenUseCase() (int, error)
 }
 
 // ここの層から見た依存先のインターフェースをフィールドとして設定すればOK -> domain層のインターフェースをここでは記載する
@@ -29,7 +29,7 @@ func NewJwtUseCase(jl service.JwtLogic) JwtUseCase {
 
 // ポイント: 具体的な処理はドメイン層に任せる
 
-func (juc *jwtUseCase) CheckJWTTokenUseCase(w http.ResponseWriter, r *http.Request) (int, error) {
+func (juc *jwtUseCase) CheckJWTTokenUseCase() (int, error) {
 	// ここでjuc.jl.CheckJWTTokenLogic()を呼び出すだけ
 	userID, err := juc.jl.CheckJWTTokenLogic(r)
 	if err != nil {

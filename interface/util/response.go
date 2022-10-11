@@ -1,6 +1,6 @@
-// infrastructure
+// interface層
 
-package logic
+package util
 
 import (
 	"ddd/domain/model"
@@ -9,24 +9,24 @@ import (
 	"net/http"
 )
 
-type ResponseLogic interface {
-	SendResponseLogic(w http.ResponseWriter, response []byte, code int) error
-	SendErrorResponseLogic(w http.ResponseWriter, errorMessage string, code int) error
-	SendAuthResponseLogic(w http.ResponseWriter, user *model.User, code int) error
+type ResponseUtil interface {
+	SendResponse(w http.ResponseWriter, response []byte, code int) error
+	SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error
+	SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error
 }
 
 type responseLogic struct {
-	jl JwtLogic
+	ju JwtUtil
 }
 
-func NewResponseLogic(jl JwtLogic) ResponseLogic {
+func NewResponseLogic(ju JwtUtil) ResponseUtil {
 	return &responseLogic{
-		jl: jl,
+		ju: ju,
 	}
 }
 
 // ステータスコード200の場合のレスポンス
-func (rl *responseLogic) SendResponseLogic(w http.ResponseWriter, response []byte, code int) error {
+func (rl *responseLogic) SendResponse(w http.ResponseWriter, response []byte, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	_, err := w.Write(response)
@@ -38,7 +38,7 @@ func (rl *responseLogic) SendResponseLogic(w http.ResponseWriter, response []byt
 
 // ステータスコード200以外のレスポンスで使用
 // message: err.Error() とする
-func (rl *responseLogic) SendErrorResponseLogic(w http.ResponseWriter, errorMessage string, code int) error {
+func (rl *responseLogic) SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	response := map[string]string{
@@ -56,13 +56,13 @@ func (rl *responseLogic) SendErrorResponseLogic(w http.ResponseWriter, errorMess
 	return nil
 }
 
-// 新規登録とログイン時のレスポンスとしてJWTトークンとUser構造体を返却する
-func (rl *responseLogic) SendAuthResponseLogic(w http.ResponseWriter, user *model.User, code int) error {
+// 新規登録とログイン時のレスポンスとして、JWTトークンとUser構造体を返却する
+func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error {
 
 	fmt.Println("SendAuthResponse!")
 
-	// このように呼び出す
-	jwtToken, err := rl.jl.CreateJWTTokenLogic(user)
+	// NEW!: 以下のように呼び出す
+	jwtToken, err := rl.ju.CreateJWTToken(user)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (rl *responseLogic) SendAuthResponseLogic(w http.ResponseWriter, user *mode
 	}
 	fmt.Printf("jsonResponse: %v\n", string(jsonResponse))
 
-	if err := rl.SendResponseLogic(w, jsonResponse, code); err != nil {
+	if err := rl.SendResponse(w, jsonResponse, code); err != nil {
 		return err
 	}
 

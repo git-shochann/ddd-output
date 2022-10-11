@@ -5,6 +5,7 @@ package handler
 import (
 	"ddd/usecase"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -26,7 +27,7 @@ type HabitHandler interface {
 type habitHandler struct {
 	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
 	juc usecase.JwtUseCase
-	// ruc usecase.ResponseUseCase
+	ruc usecase.ResponseUseCase
 }
 
 // main関数で依存関係同士で繋ぐために必要
@@ -50,10 +51,17 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 // main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
-	// usecase層に依存するので、UseCase層でJWTのロジックを使用するインターフェースを用意する
-	// 必要がある
+	// Bodyの読み込み
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		hh.ruc.SendErrorResponseUseCase(w, "Failed to read json", http.StatusBadRequest)
+		// 返すのはnilとerrでOK -> この関数を呼び出すinteface層のエラーハンドリングで使用するので
+		return nil, err
+	}
 
 	// JWTの検証
+
 	userID, err := hh.juc.CheckJWTTokenUseCase(w, r)
 	if err != nil {
 		log.Println(err)
