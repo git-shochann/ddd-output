@@ -57,6 +57,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
 		return
 	}
 
