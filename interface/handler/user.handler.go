@@ -46,8 +46,8 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
-	var signUpUserValidationValidation model.UserSignUpValidation
-	err = json.Unmarshal(reqBody, &signUpUserValidationValidation)
+	var signUpUserValidation model.UserSignUpValidation
+	err = json.Unmarshal(reqBody, &signUpUserValidation)
 
 	if err != nil {
 		log.Println(err)
@@ -55,32 +55,32 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := uh.uv.SignupValidator(&signUpUserValidationValidation)
+	errorMessage, err := uh.uv.SignupValidator(&signUpUserValidation)
 	if err != nil {
 		log.Println(err)
 		uh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
 
-	// ユーザーを登録する準備 -> リファクタリング後
+	// DBに登録する内容の準備 -> リファクタリング後 -> ここで構造体の初期化をする
 	createUser := model.User{
 		FirstName: signUpUserValidation.FirstName,
 		LastName:  signUpUserValidation.LastName,
 		Email:     signUpUserValidation.Email,
-		Password:  EncryptPassword(signUpUserValidation.Password),
+		Password:  uh.epl.EncryptPassword(signUpUserValidation.Password),
 	}
 
-	// 実際にDBに登録する
-	if err := createUser.CreateUser(); err != nil {
-		models.SendErrorResponse(w, "Failed to create user", http.StatusInternalServerError)
-		log.Println(err)
-		return
-	}
+	// 保存処理
+	// if err := createUser.CreateUser(); err != nil {
+	// 	uh.ru.SendErrorResponse(w, "Failed to create user", http.StatusInternalServerError)
+	// 	log.Println(err)
+	// 	return
+	// }
 
 	// createUser -> ポインタ型(アドレス)
-	if err := models.SendAuthResponse(w, &createUser, http.StatusOK); err != nil {
-		models.SendErrorResponse(w, "Unknown error occurred", http.StatusBadRequest)
+	if err := uh.ru.SendAuthResponse(w, &createUser, http.StatusOK); err != nil {
 		log.Println(err)
+		uh.ru.SendErrorResponse(w, "Unknown error occurred", http.StatusBadRequest)
 		return
 	}
 }
