@@ -11,6 +11,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserHandler interface {
@@ -81,11 +83,59 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	// createUser -> ポインタ型(アドレス)
 	if err := uh.ru.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
 		log.Println(err)
-		uh.ru.SendErrorResponse(w, "Unknown error occurred", http.StatusBadRequest)
+		uh.ru.SendErrorResponse(w, "Occurred unknown error", http.StatusBadRequest)
 		return
 	}
 }
 
 func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
+
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
+	}
+
+	var signInUserValidation model.UserSignInValidation
+	if err := json.Unmarshal(reqBody, &signInUserValidation); err != nil {
+		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
+	errorMessage, err := uh.uv.SigninValidator(&signInUserValidation)
+	if err != nil {
+		log.Println(err)
+		uh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		return
+	}
+
+	// emailでユーザーを検索する -> 成功したらuserに値が入る
+	user, err := uh.uuc.GetUserByEmail(signInUserValidation.Email)
+	if err != nil {
+		uh.ru.SendErrorResponse(w, "Failed to get user", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	// 	ここでログインユーザーを取得出来たのでuserを使ってく
+	// 	bcryptでDBはハッシュかしているので比較する処理を用意
+
+	// 	fmt.Printf("signinUser.Password: %v\n", signInUser.Password)
+	// 	fmt.Printf("user.Password: %v\n", user.Password)
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(signInUserValidation.Password))
+	if err != nil {
+		uh.ru.SendErrorResponse(w, "Password error", http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	if err := uh.ru.SendAuthResponse(w, user, http.StatusOK); err != nil {
+		uh.ru.SendErrorResponse(w, "Failed to sign in", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
 }
