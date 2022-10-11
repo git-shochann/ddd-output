@@ -18,9 +18,9 @@ import (
 type HabitHandler interface {
 	IndexFunc(w http.ResponseWriter, r *http.Request)
 	CreateFunc(w http.ResponseWriter, r *http.Request)
-	// UpdateFunc(http.ResponseWriter, *http.Request)
-	// DeleteFunc(http.ResponseWriter, *http.Request)
-	// GetAllHabitFunc(http.ResponseWriter, *http.Request)
+	UpdateFunc(w http.ResponseWriter, r *http.Request)
+	DeleteFunc(w http.ResponseWriter, r *http.Request)
+	GetAllHabitFunc(w http.ResponseWriter, r *http.Request)
 }
 
 type habitHandler struct {
@@ -111,3 +111,9 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	hh.ru.SendResponse(w, response, http.StatusOK)
 
 }
+
+func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {}
+
+func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {}
+
+func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) {}

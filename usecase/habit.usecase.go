@@ -17,11 +17,9 @@ import (
 // インターフェース -> 窓口である
 type HabitUseCase interface {
 	CreateHabit(habit *model.Habit) (*model.Habit, error)
-	// DeleteHabit(habitID, userID int, habit *model.Habit) error
-	// UpdateHabit(habit *model.Habit) error
-	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
-	// ここにJWTのロジックを使用する関数を追加してあげる
-	// CheckJWTToken
+	DeleteHabit(habitID, userID int, habit *model.Habit) error
+	UpdateHabit(habit *model.Habit) error
+	GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 }
 
 type habitUseCase struct {
@@ -52,3 +50,9 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 	return habit, nil
 
 }
+
+func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) error {}
+
+func (huc *habitUseCase) UpdateHabit(habit *model.Habit) error {}
+
+func (huc *habitUseCase) GetAllHabitByUserID(user model.User, habit *[]model.Habit) error {}

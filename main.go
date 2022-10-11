@@ -2,10 +2,10 @@ package main
 
 import (
 	"ddd/config"
-	"ddd/infrastructure/logic"
+
 	"ddd/infrastructure/persistence"
-	"ddd/infrastructure/validator"
 	"ddd/interface/handler"
+	"ddd/interface/validator"
 	"ddd/usecase"
 	"fmt"
 	"log"
@@ -54,20 +54,21 @@ func main() {
 
 	// interface層にusecase層を渡す -> メソッドにアクセスできるように
 	habitHandler := handler.NewHabitHandler(habitUseCase) // interface -> usecase
-	// userHandler := handler.NewUserHandler(userUseCase)    // interface -> usecase
+	userHandler := handler.NewUserHandler(userUseCase)    // interface -> usecase
 
 	/*** ルーティングの設定 ***/
 
 	router := mux.NewRouter().StrictSlash(true)
 
-	//router.HandleFunc("/api/v1/signup", userHandler.SignUpFunc).Methods("POST")
-	// router.HandleFunc("/api/v1/signin", userHandler.SignInFunc).Methods("POST")
+	// HandleFunc() 第二引数 -> 引数に関数
+	router.HandleFunc("/api/v1/signup", userHandler.SignUpFunc).Methods("POST")
+	router.HandleFunc("/api/v1/signin", userHandler.SignInFunc).Methods("POST")
 
-	router.HandleFunc("/", habitHandler.IndexFunc).Methods("GET") // 引数に関数
+	router.HandleFunc("/", habitHandler.IndexFunc).Methods("GET")
 	router.HandleFunc("/api/v1/create", habitHandler.CreateFunc).Methods("POST")
-	// router.HandleFunc("/api/v1/update/{id}", habitHandler.UpdateFunc).Methods("PATCH")
-	// router.HandleFunc("/api/v1/delete/{id}", habitHandler.DeleteFunc).Methods("DELETE")
-	// router.HandleFunc("/api/v1/get", habitHandler.GetAllHabitFunc).Methods("GET")
+	router.HandleFunc("/api/v1/update/{id}", habitHandler.UpdateFunc).Methods("PATCH")
+	router.HandleFunc("/api/v1/delete/{id}", habitHandler.DeleteFunc).Methods("DELETE")
+	router.HandleFunc("/api/v1/get", habitHandler.GetAllHabitFunc).Methods("GET")
 
 	fmt.Println("Start Server!")
 	log.Fatal(http.ListenAndServe(":8080", router))
