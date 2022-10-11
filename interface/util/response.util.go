@@ -1,4 +1,4 @@
-// interface層
+// interface層 (usecase層に依存)
 
 package util
 

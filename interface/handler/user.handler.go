@@ -1,4 +1,4 @@
-// interface (usecaseに依存)
+// interface層 (usecase層に依存)
 
 package handler
 
