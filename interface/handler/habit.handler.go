@@ -1,17 +1,15 @@
-// interface (usecaseに依存)
+// interface層 (domain層に依存)
 
 package handler
 
 import (
+	"ddd/interface/util"
 	"ddd/usecase"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
-
-// interface層はHTTPリクエスト・レスポンスを扱う層
-// usecase層と切り離すことでリクエストやレスポンスの形に変わってもinterface層の修正だけで済むようになる...？
 
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
 type HabitHandler interface {
@@ -22,20 +20,19 @@ type HabitHandler interface {
 	// GetAllHabitFunc(http.ResponseWriter, *http.Request)
 }
 
-// これはこの後記載するメソッドの型として、設定するために作成する
-// Privateで宣言 ここのパッケージ以外では使用しないので
 type habitHandler struct {
 	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
-	juc usecase.JwtUseCase
-	ruc usecase.ResponseUseCase
+	ju  util.JwtUtil
+	ru  util.ResponseUtil
 }
 
 // main関数で依存関係同士で繋ぐために必要
 // ここの構造体のフィールドに書くのは、依存先のインターフェースを書けばOK
-func NewHabitHandler(huc usecase.HabitUseCase, juc usecase.JwtUseCase) HabitHandler {
+func NewHabitHandler(huc usecase.HabitUseCase, ju util.JwtUtil, ru util.ResponseUtil) HabitHandler {
 	return &habitHandler{
 		huc: huc,
-		juc: juc,
+		ju:  ju,
+		ru:  ru,
 	}
 }
 
@@ -46,7 +43,7 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
 }
 
-// ** ここのファイルは具体的なロジックを書くのは発生しない ** //
+// ** interface層では具体的なロジックを書くのは発生しない ** //
 
 // main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
@@ -55,14 +52,13 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-		hh.ruc.SendErrorResponseUseCase(w, "Failed to read json", http.StatusBadRequest)
-		// 返すのはnilとerrでOK -> この関数を呼び出すinteface層のエラーハンドリングで使用するので
-		return nil, err
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		return
 	}
 
 	// JWTの検証
 
-	userID, err := hh.juc.CheckJWTTokenUseCase(w, r)
+	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
@@ -76,9 +72,9 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 	UserID:  userID,
 	// }
 
-	// 保存処理 -> ここでBodyの検証、バリデーションの実行
+	// 保存処理
 
-	response, err = hh.huc.CreateHabit(w, r, userID)
+	response, err := hh.huc.CreateHabit(w, r, userID)
 	if err != nil {
 		return
 	}
@@ -86,7 +82,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// *** 結果以下でレスポンスを作成するのでusecase内の、処理ではレスポンスの構造体を返す ***
 
 	// レスポンス
-	// hh.ruc.SendResponseUseCase(w, response, http.StatusOK)
+	hh.ru.SendResponse(w, response, http.StatusOK)
 
 }
 

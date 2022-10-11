@@ -1,3 +1,5 @@
+// interface層
+
 package util
 
 import (

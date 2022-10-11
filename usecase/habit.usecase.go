@@ -1,4 +1,4 @@
-// usecase (domainに依存)
+// usecase層 (domain層に依存)
 
 package usecase
 
@@ -6,7 +6,6 @@ import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
 	"ddd/domain/service"
-	"ddd/infrastructure/logic"
 	"ddd/infrastructure/validator"
 	"encoding/json"
 	"log"
