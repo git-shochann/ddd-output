@@ -1,4 +1,4 @@
-// infrastructure
+// infrastructure層 (domain層に依存)
 
 package persistence
 

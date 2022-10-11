@@ -1,3 +1,5 @@
+// domain層 (依存なし)
+
 package model
 
 import "github.com/jinzhu/gorm"

@@ -1,4 +1,4 @@
-// domain
+// domain層 (依存なし)
 
 package repository
 
