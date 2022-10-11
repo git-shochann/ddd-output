@@ -9,7 +9,7 @@ import (
 )
 
 type HabitValidation interface {
-	CreateHabitValidator(model.CreateHabitValidation) (string, error)
+	CreateHabitValidator(*model.CreateHabitValidation) (string, error)
 }
 
 type habitValidation struct{}
@@ -18,7 +18,7 @@ func NewHabitValidation() HabitValidation {
 	return &habitValidation{}
 }
 
-func (hv habitValidation) CreateHabitValidator(CreateHabitValidation model.CreateHabitValidation) (string, error) {
+func (hv habitValidation) CreateHabitValidator(CreateHabitValidation *model.CreateHabitValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(&CreateHabitValidation)

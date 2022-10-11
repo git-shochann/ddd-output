@@ -5,10 +5,8 @@ package usecase
 import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
-	"ddd/domain/service"
-	"ddd/infrastructure/validator"
+	"ddd/interface/validator"
 	"log"
-	"net/http"
 )
 
 // habitの取得や登録などでDBにアクセスする時に、domain層のrepository(インターフェースとして設定した部分)を介してアクセスすることによって、infrastructure層にアクセスするのではなく、
@@ -18,7 +16,7 @@ import (
 
 // インターフェース -> 窓口である
 type HabitUseCase interface {
-	CreateHabit(userId int) (*model.Habit, error)
+	CreateHabit(habit *model.Habit) (*model.Habit, error)
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
@@ -27,49 +25,31 @@ type HabitUseCase interface {
 }
 
 type habitUseCase struct {
-	hr  repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
-	hv  validator.HabitValidation
-	epl service.EncryptPasswordLogic
-	el  service.EnvLogic
-	jl  service.JwtLogic
-	ll  service.LoggingLogic
-	rl  service.ResponseLogic
+	hr repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
+	hv validator.HabitValidation
 }
 
-func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
+func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation) HabitUseCase {
 	return &habitUseCase{
-		hr:  hr,
-		hv:  hv,
-		epl: epl,
-		el:  el,
-		jl:  jl,
-		ll:  ll,
-		rl:  rl,
+		hr: hr,
+		hv: hv,
 	}
 }
 
 // WIP: ここで引数にhttp.ResponseWriterが来ることはない
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(userID int) (*model.Habit, error) {
+func (hu *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
 	err := hu.hr.CreateHabitPersistence(habit)
 	if err != nil {
-		hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)
+		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)
 		return nil, err
 	}
 
-	// response, err := json.Marshal(habit)
-	// if err != nil {
-	// 	models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-	// 	log.Println(err)
-	// 	return
-	// }
-
-	// 	models.SendResponse(w, response, http.StatusOK)
-
-	return nil
+	// 書き変わったhabitを返す
+	return habit, nil
 
 }
 

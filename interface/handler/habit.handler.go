@@ -5,6 +5,7 @@ package handler
 import (
 	"ddd/domain/model"
 	"ddd/interface/util"
+	"ddd/interface/validator"
 	"ddd/usecase"
 	"encoding/json"
 	"fmt"
@@ -23,16 +24,18 @@ type HabitHandler interface {
 }
 
 type habitHandler struct {
-	huc usecase.HabitUseCase // usecase層のインターフェースを設定して、該当のメソッドを使用出来るようにする
-	ju  util.JwtUtil
-	ru  util.ResponseUtil
+	huc usecase.HabitUseCase      // usecase層
+	hv  validator.HabitValidation // interface層
+	ju  util.JwtUtil              // interface層
+	ru  util.ResponseUtil         // interface層
 }
 
 // main関数で依存関係同士で繋ぐために必要
 // ここの構造体のフィールドに書くのは、依存先のインターフェースを書けばOK
-func NewHabitHandler(huc usecase.HabitUseCase, ju util.JwtUtil, ru util.ResponseUtil) HabitHandler {
+func NewHabitHandler(huc usecase.HabitUseCase, hv validator.HabitValidation, ju util.JwtUtil, ru util.ResponseUtil) HabitHandler {
 	return &habitHandler{
 		huc: huc,
+		hv:  hv,
 		ju:  ju,
 		ru:  ru,
 	}
@@ -50,14 +53,6 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 // main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
-	// Bodyの読み込み
-	reqBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err)
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
-	}
-
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
@@ -65,13 +60,13 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 保存準備(JWTにIDが乗っているので、IDをもとに保存処理をする)
-
-	// これは..？
-	// habit := model.Habit{
-	// 	Content: habitValidation.Content,
-	// 	UserID:  userID,
-	// }
+	// Bodyの読み込み
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
+	}
 
 	// バリデーション
 	var habitValidation model.CreateHabitValidation
@@ -82,46 +77,35 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := habitValidation.CreateHabitValidator()
-
+	errorMessage, err := hh.hv.CreateHabitValidator(&habitValidation)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		log.Println(err)
 		return
 	}
 
+	habit := model.Habit{
+		Content:  habitValidation.Content,
+		Finished: false,
+		UserID:   userID,
+	}
+
 	// 保存処理
-	response, err := hh.huc.CreateHabit(w, r, userID)
+	newHabit, err := hh.huc.CreateHabit(&habit) // -> usecase層に依存
 	if err != nil {
+		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 
-	// *** 結果以下でレスポンスを作成するのでusecase内の、処理ではレスポンスの構造体を返す ***
+	// 登録が完了したhabitを上書きしてレスポンスとして返すためにjson形式にする([]byte)
+	response, err := json.Marshal(newHabit)
+	if err != nil {
+		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
-	// レスポンス
 	hh.ru.SendResponse(w, response, http.StatusOK)
 
 }
-
-// 参考 //
-
-// func (tc *todoController) CreateTodo(w http.ResponseWriter, r *http.Request) {
-
-// 	// トークンからuserIdを取得
-// 	userId, err := tc.as.GetUserIdFromToken(w, r)
-// 	if userId == 0 || err != nil {
-// 		return
-// 	}
-
-// 	// todoデータ取得処理
-
-// 以下の処理内でのResponseはどんな感じ？
-
-// 	responseTodo, err := tc.ts.CreateTodo(w, r, userId)
-// 	if err != nil {
-// 		return
-// 	}
-
-// 	// レスポンス送信処理
-// 	tc.ts.SendCreateTodoResponse(w, &responseTodo)
-// }
