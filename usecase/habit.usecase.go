@@ -17,8 +17,8 @@ import (
 // インターフェース -> 窓口である
 type HabitUseCase interface {
 	CreateHabit(habit *model.Habit) (*model.Habit, error)
-	DeleteHabit(habitID, userID int, habit *model.Habit) error
 	UpdateHabit(habit *model.Habit) error
+	DeleteHabit(habitID, userID int, habit *model.Habit) error
 	GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 }
 

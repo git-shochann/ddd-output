@@ -39,6 +39,25 @@ func (h *habitPersistence) CreateHabitPersistence(habit *model.Habit) error {
 
 }
 
+func (h *habitPersistence) UpdateHabitPersistence(habit *model.Habit) error {
+
+	db := h.Conn
+
+	result := db.Model(h).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
+
+	if err := result.Error; err != nil {
+		return err
+	}
+
+	// 実際にレコードが存在し、更新されたかどうかの判定は以下で行う
+	if result.RowsAffected < 1 {
+		err := errors.New("not found record") // 当たり前のように論理削除していたら更新は不可
+		return err
+	}
+
+	return nil
+}
+
 func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *model.Habit) error {
 
 	// DB接続の用意
@@ -54,25 +73,6 @@ func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *mo
 	// 実際にレコードが存在し、削除されたかどうかの判定は以下で行う
 	if result.RowsAffected < 1 {
 		err := errors.New("not found record")
-		return err
-	}
-
-	return nil
-}
-
-func (h *habitPersistence) UpdateHabitPersistence(habit *model.Habit) error {
-
-	db := h.Conn
-
-	result := db.Model(h).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
-
-	if err := result.Error; err != nil {
-		return err
-	}
-
-	// 実際にレコードが存在し、更新されたかどうかの判定は以下で行う
-	if result.RowsAffected < 1 {
-		err := errors.New("not found record") // 当たり前のように論理削除していたら更新は不可
 		return err
 	}
 
