@@ -95,7 +95,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 保存処理
 	newHabit, err := hh.huc.CreateHabit(&habit) // -> usecase層に依存
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "failed to create habit", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "Failed to create habit", http.StatusBadRequest)
 		log.Println(err)
 		return
 	}
@@ -103,7 +103,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 登録が完了したhabitを上書きしてレスポンスとして返すためにjson形式にする([]byte)
 	response, err := json.Marshal(newHabit)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "failed to encode json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
 		log.Println(err)
 		return
 	}

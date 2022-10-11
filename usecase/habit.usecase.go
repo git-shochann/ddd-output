@@ -39,9 +39,9 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 // WIP: ここで引数にhttp.ResponseWriterが来ることはない
 
 // domainのインターフェースを使って、実際に処理を行う
-func (hu *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
+func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
-	err := hu.hr.CreateHabitPersistence(habit)
+	err := huc.hr.CreateHabitPersistence(habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)

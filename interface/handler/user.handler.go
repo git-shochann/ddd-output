@@ -71,14 +71,15 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 保存処理
-	// if err := createUser.CreateUser(); err != nil {
-	// 	uh.ru.SendErrorResponse(w, "Failed to create user", http.StatusInternalServerError)
-	// 	log.Println(err)
-	// 	return
-	// }
+	newUser, err := uh.uuc.CreateUser(&createUser)
+	if err != nil {
+		uh.ru.SendErrorResponse(w, "Failed to create user", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
 	// createUser -> ポインタ型(アドレス)
-	if err := uh.ru.SendAuthResponse(w, &createUser, http.StatusOK); err != nil {
+	if err := uh.ru.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
 		log.Println(err)
 		uh.ru.SendErrorResponse(w, "Unknown error occurred", http.StatusBadRequest)
 		return
