@@ -1,3 +1,5 @@
+// interface層
+
 package validator
 
 import (

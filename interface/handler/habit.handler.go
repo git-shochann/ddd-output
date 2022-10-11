@@ -3,8 +3,10 @@
 package handler
 
 import (
+	"ddd/domain/model"
 	"ddd/interface/util"
 	"ddd/usecase"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -53,15 +55,14 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		return
+		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
 	// JWTの検証
-
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
-		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
+		return
 	}
 
 	// 保存準備(JWTにIDが乗っているので、IDをもとに保存処理をする)
@@ -72,8 +73,24 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 	UserID:  userID,
 	// }
 
-	// 保存処理
+	// バリデーション
+	var habitValidation model.CreateHabitValidation
+	err = json.Unmarshal(reqBody, &habitValidation)
+	if err != nil {
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
 
+	errorMessage, err := habitValidation.CreateHabitValidator()
+
+	if err != nil {
+		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
+	// 保存処理
 	response, err := hh.huc.CreateHabit(w, r, userID)
 	if err != nil {
 		return

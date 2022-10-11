@@ -7,7 +7,6 @@ import (
 	"ddd/domain/repository"
 	"ddd/domain/service"
 	"ddd/infrastructure/validator"
-	"encoding/json"
 	"log"
 	"net/http"
 )
@@ -19,7 +18,7 @@ import (
 
 // インターフェース -> 窓口である
 type HabitUseCase interface {
-	CreateHabit(w http.ResponseWriter, r *http.Request, userId int) (*model.Habit, error)
+	CreateHabit(userId int) (*model.Habit, error)
 	// DeleteHabit(habitID, userID int, habit *model.Habit) error
 	// UpdateHabit(habit *model.Habit) error
 	// GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
@@ -27,7 +26,6 @@ type HabitUseCase interface {
 	// CheckJWTToken
 }
 
-// どの方向に依存しているかで考えると分かりやすい。
 type habitUseCase struct {
 	hr  repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
 	hv  validator.HabitValidation
@@ -38,7 +36,6 @@ type habitUseCase struct {
 	rl  service.ResponseLogic
 }
 
-// インターフェースを引数にとってインターフェースを返す？ -> この引数はどこでそもそも呼び出す？
 func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation, epl logic.EncryptPasswordLogic, el logic.EnvLogic, jl logic.JwtLogic, ll logic.LoggingLogic, rl logic.ResponseLogic) HabitUseCase {
 	return &habitUseCase{
 		hr:  hr,
@@ -55,23 +52,6 @@ func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation
 
 // domainのインターフェースを使って、実際に処理を行う
 func (hu *habitUseCase) CreateHabit(userID int) (*model.Habit, error) {
-
-	// バリデーションの事前設定
-	var habitValidation model.CreateHabitValidation
-	err = json.Unmarshal(reqBody, &habitValidation)
-	if err != nil {
-		hu.rl.SendErrorResponseLogic(w, "Failed to read json", http.StatusBadRequest)
-		log.Println(err)
-		return nil, err
-	}
-
-	errorMessage, err := habitValidation.CreateHabitValidator()
-
-	if err != nil {
-		hu.rl.SendErrorResponseLogic(w, errorMessage, http.StatusBadRequest)
-		log.Println(err)
-		return nil, err
-	}
 
 	err := hu.hr.CreateHabitPersistence(habit)
 	if err != nil {
