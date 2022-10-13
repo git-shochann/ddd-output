@@ -15,7 +15,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
@@ -190,6 +190,72 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	hh.ru.SendResponse(w, response, http.StatusOK)
 }
 
-func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {}
+func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
-func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) {}
+	// JWTの検証
+	userID, err := hh.ju.CheckJWTToken(r)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		return
+	}
+
+	// 確認したJWTのクレームのuser_id + パスパラメーターから取得する habitのidで削除処理を実装する
+	vars := mux.Vars(r)
+	fmt.Printf("vars: %v\n", vars) // vars: map[id:1]
+	habitIDStr := vars["id"]
+
+	habitID, err := strconv.Atoi(habitIDStr)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
+		return
+	}
+
+	var habit model.Habit
+
+	err = hh.huc.DeleteHabit(habitID, userID, &habit)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to delete habit", http.StatusBadRequest)
+		return
+	}
+
+	hh.ru.SendResponse(w, nil, http.StatusOK)
+
+}
+
+// ユーザー1人が持っているhabitを全て取得する
+func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) {
+
+	// JWTの検証
+	userID, err := hh.ju.CheckJWTToken(r)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		return
+	}
+
+	user := model.User{
+		Model: gorm.Model{
+			ID: uint(userID),
+		},
+	}
+
+	var habit []model.Habit
+	allHabit, err = hh.huc.GetAllHabitByUserID(&habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to get all habit", http.StatusBadRequest)
+		return
+
+	response, err := json.Marshal(habit)
+	if err != nil {
+		models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+
+		log.Println(err)
+		return
+	}
+
+	models.SendResponse(w, response, http.StatusOK)
+}
