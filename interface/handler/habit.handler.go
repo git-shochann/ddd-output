@@ -12,6 +12,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 // ここの層に依存する箇所で使用する メソッドの窓口を用意してあげる
@@ -112,7 +116,79 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {}
+// WIP: 現在1つのIDを送ってるのにそのユーザーに紐付く習慣全て変わってる
+func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
+
+	// JWTの検証
+	userID, err := hh.ju.CheckJWTToken(r)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		return
+	}
+
+	// 確認したJWTのクレームのuser_id
+	// パスパラメーターから取得する habitのid
+
+	vars := mux.Vars(r)
+	// fmt.Printf("vars: %v\n", vars) // vars: map[id:1]
+	habitIDStr := vars["id"]
+
+	habitID, err := strconv.Atoi(habitIDStr)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
+		return
+	}
+
+	// Bodyを検証
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		return
+	}
+
+	// バリデーションの実施
+	var habitValidation model.CreateHabitValidation
+	err = json.Unmarshal(reqBody, &habitValidation)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		return
+	}
+
+	errorMessage, err := hh.hv.CreateHabitValidator(&habitValidation)
+	if err != nil {
+		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
+	habit := model.Habit{
+		Model: gorm.Model{
+			ID: uint(habitID),
+		}, // habitテーブルのid
+		Content: habitValidation.Content, // content
+		UserID:  userID,                  // user_id
+	}
+
+	updatedHabit, err := hh.huc.UpdateHabit(&habit)
+	if err != nil {
+		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to update habit", http.StatusBadRequest)
+		return
+	}
+
+	response, err := json.Marshal(updatedHabit)
+	if err != nil {
+		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
+		log.Println(err)
+		return
+	}
+
+	hh.ru.SendResponse(w, response, http.StatusOK)
+}
 
 func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {}
 

@@ -17,7 +17,7 @@ import (
 // インターフェース -> 窓口である
 type HabitUseCase interface {
 	CreateHabit(habit *model.Habit) (*model.Habit, error)
-	UpdateHabit(habit *model.Habit) error
+	UpdateHabit(habit *model.Habit) (*model.Habit, error)
 	DeleteHabit(habitID, userID int, habit *model.Habit) error
 	GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
 }
@@ -51,8 +51,19 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
 }
 
-func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) error {}
+func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
-func (huc *habitUseCase) UpdateHabit(habit *model.Habit) error {}
+	err := huc.hr.UpdateHabitPersistence(habit)
+	if err != nil {
+		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
+		log.Println(err)
+		return nil, err
+	}
+
+	// 書き変わったhabitを返す
+	return habit, nil
+}
+
+func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) error {}
 
 func (huc *habitUseCase) GetAllHabitByUserID(user model.User, habit *[]model.Habit) error {}
