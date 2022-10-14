@@ -19,8 +19,7 @@ type habitPersistence struct {
 	Conn *gorm.DB
 }
 
-// メソッドを満たしている構造体を返す == インターフェース型として実装する
-// どこで呼び出されている？ !!! infrastructureに依存している層か...。 どこ？
+// ここは infrastructure層だけど、domain層のインターフェースを返す
 func NewHabitPersistence(conn *gorm.DB) repository.HabitRepository {
 	return &habitPersistence{Conn: conn}
 }
@@ -81,7 +80,7 @@ func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *mo
 
 //実体を受け取って、実体を書き換えるので、戻り値に指定する必要はない。
 // 旧: 値渡し, 新: ポインタを受け取る
-func (h *habitPersistence) GetAllHabitByUserIDPersistence(user model.User, habit *[]model.Habit) error {
+func (h *habitPersistence) GetAllHabitByUserIDPersistence(user *model.User, habit *[]model.Habit) error {
 
 	// habitテーブル内の外部キーであるuseridで全てを取得する
 	// fmt.Printf("u.ID: %v\n", u.ID)     // 1

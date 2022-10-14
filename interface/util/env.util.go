@@ -8,17 +8,17 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type EnvLogic interface {
+type EnvUtil interface {
 	LoadEnv()
 }
 
-type envLogic struct{}
+type envUtil struct{}
 
-func NewEnvLogic() EnvLogic {
-	return &envLogic{}
+func NewEnvUtil() EnvUtil {
+	return &envUtil{}
 }
 
-func (ev envLogic) LoadEnv() {
+func (ev envUtil) LoadEnv() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Unable to load env file: %v", err)

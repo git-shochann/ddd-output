@@ -27,10 +27,9 @@ type habitUseCase struct {
 	hv validator.HabitValidation
 }
 
-func NewHabitUseCase(hr repository.HabitRepository, hv validator.HabitValidation) HabitUseCase {
+func NewHabitUseCase(hr repository.HabitRepository) HabitUseCase {
 	return &habitUseCase{
 		hr: hr,
-		hv: hv,
 	}
 }
 

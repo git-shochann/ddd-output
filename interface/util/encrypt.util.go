@@ -4,19 +4,19 @@ package util
 
 import "golang.org/x/crypto/bcrypt"
 
-type EncryptPassword interface {
+type EncryptPasswordUtil interface {
 	EncryptPassword(password string) string
 }
 
-type encryptPassword struct{}
+type encryptPasswordUtil struct{}
 
 // main関数で使うために用意
 // インターフェース型を返せば、呼び出し元でそのメソッドが使用することが出来る
-func NewEncryptPasswordLogic() EncryptPassword {
-	return &encryptPassword{}
+func NewEncryptPasswordUtil() EncryptPasswordUtil {
+	return &encryptPasswordUtil{}
 }
 
-func (epl *encryptPassword) EncryptPassword(password string) string {
+func (epl *encryptPasswordUtil) EncryptPassword(password string) string {
 	hashed, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(hashed)
 }

@@ -15,18 +15,18 @@ type ResponseUtil interface {
 	SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error
 }
 
-type responseLogic struct {
+type responseUtil struct {
 	ju JwtUtil
 }
 
-func NewResponseLogic(ju JwtUtil) ResponseUtil {
-	return &responseLogic{
+func NewResponseUtil(ju JwtUtil) ResponseUtil {
+	return &responseUtil{
 		ju: ju,
 	}
 }
 
 // ステータスコード200の場合のレスポンス
-func (rl *responseLogic) SendResponse(w http.ResponseWriter, response []byte, code int) error {
+func (rl responseUtil) SendResponse(w http.ResponseWriter, response []byte, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	_, err := w.Write(response)
@@ -38,7 +38,7 @@ func (rl *responseLogic) SendResponse(w http.ResponseWriter, response []byte, co
 
 // ステータスコード200以外のレスポンスで使用
 // message: err.Error() とする
-func (rl *responseLogic) SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error {
+func (rl responseUtil) SendErrorResponse(w http.ResponseWriter, errorMessage string, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	response := map[string]string{
@@ -57,7 +57,7 @@ func (rl *responseLogic) SendErrorResponse(w http.ResponseWriter, errorMessage s
 }
 
 // 新規登録とログイン時のレスポンスとして、JWTトークンとUser構造体を返却する
-func (rl *responseLogic) SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error {
+func (rl responseUtil) SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error {
 
 	fmt.Println("SendAuthResponse!")
 

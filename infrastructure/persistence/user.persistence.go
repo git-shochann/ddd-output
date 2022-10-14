@@ -16,8 +16,8 @@ type userPersistence struct {
 	Conn *gorm.DB
 }
 
+// ここは infrastructure層だけど、domain層のインターフェースを返す
 func NewUserPersistence(conn *gorm.DB) repository.UserRepository {
-	// WIP: ここなんでポインタ型で返す？
 	return &userPersistence{Conn: conn}
 }
 

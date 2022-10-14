@@ -34,7 +34,6 @@ type habitHandler struct {
 	ru  util.ResponseUtil         // interface層
 }
 
-// main関数で依存関係同士で繋ぐために必要
 // ここの構造体のフィールドに書くのは、依存先のインターフェースを書けばOK
 func NewHabitHandler(huc usecase.HabitUseCase, hv validator.HabitValidation, ju util.JwtUtil, ru util.ResponseUtil) HabitHandler {
 	return &habitHandler{
