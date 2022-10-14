@@ -25,10 +25,10 @@ type userHandler struct {
 	uv  validator.UserValidation // interface層
 	ju  util.JwtUtil             // interface層
 	ru  util.ResponseUtil        // interface層
-	epl util.EncryptPassword     // interface層
+	epl util.EncryptPasswordUtil // interface層
 }
 
-func NewUserHandler(uuc usecase.UserUseCase, uv validator.UserValidation, ju util.JwtUtil, ru util.ResponseUtil, epl util.EncryptPassword) UserHandler {
+func NewUserHandler(uuc usecase.UserUseCase, uv validator.UserValidation, ju util.JwtUtil, ru util.ResponseUtil, epl util.EncryptPasswordUtil) UserHandler {
 	return &userHandler{
 		uuc: uuc,
 		uv:  uv,
