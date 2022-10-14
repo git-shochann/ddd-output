@@ -10,5 +10,5 @@ type HabitRepository interface {
 	CreateHabitPersistence(h *model.Habit) error
 	UpdateHabitPersistence(habit *model.Habit) error
 	DeleteHabitPersistence(habitID, userID int, habit *model.Habit) error
-	GetAllHabitByUserIDPersistence(user model.User, habit *[]model.Habit) error
+	GetAllHabitByUserIDPersistence(user *model.User, habit *[]model.Habit) error
 }

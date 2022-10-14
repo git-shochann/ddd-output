@@ -243,19 +243,19 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var habit []model.Habit
-	allHabit, err = hh.huc.GetAllHabitByUserID(&habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
+	allHabit, err := hh.huc.GetAllHabitByUserID(&user, &habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
 	if err != nil {
 		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to get all habit", http.StatusBadRequest)
 		return
+	}
 
-	response, err := json.Marshal(habit)
+	response, err := json.Marshal(allHabit)
 	if err != nil {
-		models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-
 		log.Println(err)
+		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
 
-	models.SendResponse(w, response, http.StatusOK)
+	hh.ru.SendResponse(w, response, http.StatusOK)
 }

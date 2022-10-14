@@ -6,11 +6,7 @@ import (
 	"ddd/domain/model"
 	"ddd/domain/repository"
 	"ddd/interface/validator"
-	"encoding/json"
 	"log"
-	"net/http"
-
-	"gorm.io/gorm"
 )
 
 // habitの取得や登録などでDBにアクセスする時に、domain層のrepository(インターフェースとして設定した部分)を介してアクセスすることによって、infrastructure層にアクセスするのではなく、
@@ -23,7 +19,7 @@ type HabitUseCase interface {
 	CreateHabit(habit *model.Habit) (*model.Habit, error)
 	UpdateHabit(habit *model.Habit) (*model.Habit, error)
 	DeleteHabit(habitID, userID int, habit *model.Habit) error
-	GetAllHabitByUserID(user model.User, habit *[]model.Habit) error
+	GetAllHabitByUserID(user *model.User, habit *[]model.Habit) (*[]model.Habit, error)
 }
 
 type habitUseCase struct {
@@ -81,40 +77,15 @@ func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) er
 	return nil
 }
 
-// ユーザー1人が持っているhabitを全て取得する
-func (huc *habitUseCase) GetAllHabitByUserID(user model.User, habit *[]model.Habit) error {
+func (huc *habitUseCase) GetAllHabitByUserID(user *model.User, habit *[]model.Habit) (*[]model.Habit, error) {
 
-	// JWTの検証とユーザーIDの取得
-	userID, err := models.CheckJWTToken(r)
+	err := huc.hr.GetAllHabitByUserIDPersistence(user, habit)
 	if err != nil {
-		models.SendErrorResponse(w, "authentication error", http.StatusBadRequest)
-
+		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)
-		return
+		return nil, err
 	}
 
-	user := models.User{
-		Model: gorm.Model{
-			ID: uint(userID),
-		},
-	}
-
-	var habit []models.Habit
-	err = user.GetAllHabitByUserID(&habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
-	if err != nil {
-		models.SendErrorResponse(w, "Failed to get habit", http.StatusBadRequest)
-
-		log.Println(err)
-		return
-	}
-
-	response, err := json.Marshal(habit)
-	if err != nil {
-		models.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-
-		log.Println(err)
-		return
-	}
-
-	models.SendResponse(w, response, http.StatusOK)
+	// 書き変わったhabitを返す
+	return habit, nil
 }

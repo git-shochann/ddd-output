@@ -80,7 +80,7 @@ func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *mo
 }
 
 //実体を受け取って、実体を書き換えるので、戻り値に指定する必要はない。
-// 旧: 値渡し, 新: ポインタを受け取る！s
+// 旧: 値渡し, 新: ポインタを受け取る
 func (h *habitPersistence) GetAllHabitByUserIDPersistence(user model.User, habit *[]model.Habit) error {
 
 	// habitテーブル内の外部キーであるuseridで全てを取得する
