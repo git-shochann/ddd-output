@@ -2,6 +2,7 @@ package main
 
 import (
 	"ddd/config"
+	"ddd/infrastructure"
 	"ddd/interface/handler"
 	"ddd/interface/util"
 	"ddd/interface/validator"
@@ -9,7 +10,6 @@ import (
 	"log"
 	"net/http"
 
-	"ddd/infrastructure/persistence"
 	"ddd/usecase"
 
 	"github.com/gorilla/mux"
@@ -24,8 +24,8 @@ func main() {
 
 	/*** 1. infrastructure層からdomain層をインターフェースを提供する ***/
 
-	habitPersistence := persistence.NewHabitPersistence(db)
-	userPersistence := persistence.NewUserPersistence(db)
+	habitPersistence := infrastructure.NewHabitPersistence(db)
+	userPersistence := infrastructure.NewUserPersistence(db)
 
 	/*** 2. usecase層でdomain層を使うためにdomain層のインターフェースを渡す usecase -> domain ***/
 

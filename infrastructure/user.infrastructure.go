@@ -1,10 +1,10 @@
 // infrastructure層 (domain層に依存)
 
-package persistence
+package infrastructure
 
 import (
+	"ddd/domain"
 	"ddd/domain/model"
-	"ddd/domain/repository"
 
 	"github.com/jinzhu/gorm"
 )
@@ -17,7 +17,7 @@ type userPersistence struct {
 }
 
 // ここは infrastructure層だけど、domain層のインターフェースを返す
-func NewUserPersistence(conn *gorm.DB) repository.UserRepository {
+func NewUserPersistence(conn *gorm.DB) domain.UserRepository {
 	return &userPersistence{Conn: conn}
 }
 

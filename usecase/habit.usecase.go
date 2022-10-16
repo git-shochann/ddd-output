@@ -3,9 +3,8 @@
 package usecase
 
 import (
+	"ddd/domain"
 	"ddd/domain/model"
-	"ddd/domain/repository"
-	"ddd/interface/validator"
 	"log"
 )
 
@@ -23,11 +22,10 @@ type HabitUseCase interface {
 }
 
 type habitUseCase struct {
-	hr repository.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
-	hv validator.HabitValidation
+	hr domain.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
 }
 
-func NewHabitUseCase(hr repository.HabitRepository) HabitUseCase {
+func NewHabitUseCase(hr domain.HabitRepository) HabitUseCase {
 	return &habitUseCase{
 		hr: hr,
 	}

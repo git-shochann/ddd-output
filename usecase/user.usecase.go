@@ -3,8 +3,8 @@
 package usecase
 
 import (
+	"ddd/domain"
 	"ddd/domain/model"
-	"ddd/domain/repository"
 	"log"
 )
 
@@ -16,10 +16,10 @@ type UserUseCase interface {
 
 // 依存先のインターフェースがあれば書く
 type userUseCase struct {
-	ur repository.UserRepository
+	ur domain.UserRepository
 }
 
-func NewUserUseCase(ur repository.UserRepository) UserUseCase {
+func NewUserUseCase(ur domain.UserRepository) UserUseCase {
 	return &userUseCase{
 		ur: ur,
 	}
