@@ -9,7 +9,6 @@ import (
 	"ddd/usecase"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -43,7 +42,6 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	// Jsonでくるので、まずGoで使用できるようにする
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
@@ -52,14 +50,12 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &signUpUserValidation)
 
 	if err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
 
 	errorMessage, err := uh.uv.SignupValidator(&signUpUserValidation)
 	if err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
@@ -76,13 +72,11 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	newUser, err := uh.uuc.CreateUser(&createUser)
 	if err != nil {
 		uh.ru.SendErrorResponse(w, "Failed to create user", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
 	// createUser -> ポインタ型(アドレス)
 	if err := uh.ru.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, "Occurred unknown error", http.StatusBadRequest)
 		return
 	}
@@ -92,7 +86,6 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
@@ -100,13 +93,11 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	var signInUserValidation model.UserSignInValidation
 	if err := json.Unmarshal(reqBody, &signInUserValidation); err != nil {
 		uh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
 	errorMessage, err := uh.uv.SigninValidator(&signInUserValidation)
 	if err != nil {
-		log.Println(err)
 		uh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
@@ -115,7 +106,6 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	user, err := uh.uuc.GetUserByEmail(signInUserValidation.Email)
 	if err != nil {
 		uh.ru.SendErrorResponse(w, "Failed to get user", http.StatusInternalServerError)
-		log.Println(err)
 		return
 	}
 
@@ -128,13 +118,11 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(signInUserValidation.Password))
 	if err != nil {
 		uh.ru.SendErrorResponse(w, "Password error", http.StatusInternalServerError)
-		log.Println(err)
 		return
 	}
 
 	if err := uh.ru.SendAuthResponse(w, user, http.StatusOK); err != nil {
 		uh.ru.SendErrorResponse(w, "Failed to sign in", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 

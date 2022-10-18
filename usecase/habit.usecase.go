@@ -5,7 +5,6 @@ package usecase
 import (
 	"ddd/domain"
 	"ddd/domain/model"
-	"log"
 )
 
 // habitの取得や登録などでDBにアクセスする時に、domain層のrepository(インターフェースとして設定した部分)を介してアクセスすることによって、infrastructure層にアクセスするのではなく、
@@ -39,7 +38,6 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 	err := huc.hr.CreateHabitInfrastructure(habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
-		log.Println(err)
 		return nil, err
 	}
 
@@ -53,7 +51,6 @@ func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 	err := huc.hr.UpdateHabitInfrastructure(habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
-		log.Println(err)
 		return nil, err
 	}
 
@@ -66,7 +63,6 @@ func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) er
 	err := huc.hr.DeleteHabitInfrastructure(habitID, userID, habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
-		log.Println(err)
 		return err
 	}
 
@@ -79,7 +75,6 @@ func (huc *habitUseCase) GetAllHabitByUserID(user *model.User, habit *[]model.Ha
 	err := huc.hr.GetAllHabitByUserIDInfrastructure(user, habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
-		log.Println(err)
 		return nil, err
 	}
 

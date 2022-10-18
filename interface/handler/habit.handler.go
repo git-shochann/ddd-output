@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -59,7 +58,6 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
 		return
 	}
@@ -67,7 +65,6 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// Bodyの読み込み
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
@@ -77,14 +74,12 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
 	errorMessage, err := hh.hv.CreateHabitValidator(&habitValidation)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -99,7 +94,6 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	newHabit, err := hh.huc.CreateHabit(&habit) // -> usecase層に依存
 	if err != nil {
 		hh.ru.SendErrorResponse(w, "Failed to create habit", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -107,7 +101,6 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	response, err := json.Marshal(newHabit)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -121,7 +114,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
 		return
 	}
@@ -135,7 +127,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 	habitID, err := strconv.Atoi(habitIDStr)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
 		return
 	}
@@ -143,7 +134,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	// Bodyを検証
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
@@ -152,7 +142,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	var habitValidation model.CreateHabitValidation
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
@@ -160,7 +149,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	errorMessage, err := hh.hv.CreateHabitValidator(&habitValidation)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -174,7 +162,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 	updatedHabit, err := hh.huc.UpdateHabit(&habit)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to update habit", http.StatusBadRequest)
 		return
 	}
@@ -182,7 +169,6 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	response, err := json.Marshal(updatedHabit)
 	if err != nil {
 		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
-		log.Println(err)
 		return
 	}
 
@@ -194,7 +180,6 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
 		return
 	}
@@ -206,7 +191,6 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 	habitID, err := strconv.Atoi(habitIDStr)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
 		return
 	}
@@ -215,7 +199,6 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 	err = hh.huc.DeleteHabit(habitID, userID, &habit)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to delete habit", http.StatusBadRequest)
 		return
 	}
@@ -230,7 +213,6 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
 		return
 	}
@@ -244,14 +226,12 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	var habit []model.Habit
 	allHabit, err := hh.huc.GetAllHabitByUserID(&user, &habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to get all habit", http.StatusBadRequest)
 		return
 	}
 
 	response, err := json.Marshal(allHabit)
 	if err != nil {
-		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
