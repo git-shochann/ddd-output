@@ -31,6 +31,7 @@ func (h *habitInfrastructure) CreateHabitInfrastructure(habit *model.Habit) erro
 	db := h.Conn
 
 	if err := db.Create(habit).Error; err != nil {
+		err = NewDbErr("faild to create habit", err)
 		return err
 	}
 	// fmt.Printf("h: %v\n", h) // h: {{2 2022-09-07 13:47:28.774095 +0900 JST m=+3.267163626 2022-09-07 13:47:28.774095 +0900 JST m=+3.267163626 <nil>} hello false 1}
