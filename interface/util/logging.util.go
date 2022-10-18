@@ -1,5 +1,7 @@
 // interface層 (usecase層に依存)
 
+// *** 現在は使用なし *** //
+
 package util
 
 import (
@@ -17,10 +19,6 @@ type loggingUtil struct{}
 func NewLoggingUtil() LoggingUtil {
 	return &loggingUtil{}
 }
-
-// main()
-// 1. logging := logic.NewLogging()
-// 2. logging.LoggingSetting()
 
 func (ll *loggingUtil) LoggingSetting() {
 	file, err := os.OpenFile("logging.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
