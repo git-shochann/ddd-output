@@ -1,5 +1,7 @@
 package infrastructure
 
+import "errors"
+
 // 独自エラーの作成
 // デバッグがしやすいように、実際の処理で起きたパッケージも格納する
 
@@ -15,3 +17,6 @@ func (e *DbErr) Error() string {
 func NewDbErr(message string, innerMessage error) *DbErr {
 	return &DbErr{message, innerMessage} // 構造体の初期化 + ポインタ化 + 関数に戻り値として返す
 }
+
+// Errから始める これも慣習
+var ErrRecordNotFound = errors.New("not found record")

@@ -5,7 +5,6 @@ package infrastructure
 import (
 	"ddd/domain"
 	"ddd/domain/model"
-	"errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -46,13 +45,13 @@ func (h *habitInfrastructure) UpdateHabitInfrastructure(habit *model.Habit) erro
 	result := db.Model(h).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
 
 	if err := result.Error; err != nil {
+		err = NewDbErr("failed to update habit", err)
 		return err
 	}
 
 	// 実際にレコードが存在し、更新されたかどうかの判定は以下で行う
 	if result.RowsAffected < 1 {
-		err := errors.New("not found record") // 当たり前のように論理削除していたら更新は不可
-		return err
+		return ErrRecordNotFound
 	}
 
 	return nil
@@ -67,13 +66,13 @@ func (h *habitInfrastructure) DeleteHabitInfrastructure(habitID, userID int, hab
 	result := db.Where("id = ? AND user_id = ?", habitID, userID).Delete(habit)
 
 	if err := result.Error; err != nil {
+		err = NewDbErr("failed to delete habit", err)
 		return err
 	}
 
 	// 実際にレコードが存在し、削除されたかどうかの判定は以下で行う
 	if result.RowsAffected < 1 {
-		err := errors.New("not found record")
-		return err
+		return ErrRecordNotFound
 	}
 
 	return nil
@@ -91,7 +90,7 @@ func (h *habitInfrastructure) GetAllHabitByUserIDInfrastructure(user *model.User
 
 	// 全て取得したい
 	if err := db.Where("user_id = ?", user.ID).Find(habit).Error; err != nil {
-		// ここの戻り値
+		err = NewDbErr("failed to get all habit", err)
 		return err
 	}
 	// fmt.Printf("habit: %v\n", habit) // habit: [{{2 2022-09-07 04:47:29 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is test false 1} {{3 2022-09-07 04:49:30 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} aaa false 1} {{4 2022-09-07 04:49:31 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is test false 1} {{5 2022-09-07 04:50:22 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is testbbb false 1} {{6 2022-09-07 04:55:55 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} aaadsadsa false 1}]
