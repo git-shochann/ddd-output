@@ -24,14 +24,14 @@ func main() {
 
 	/*** 1. infrastructure層からdomain層をインターフェースを提供する ***/
 
-	habitPersistence := infrastructure.NewHabitPersistence(db)
-	userPersistence := infrastructure.NewUserPersistence(db)
+	habitInfrastructure := infrastructure.NewHabitInfrastructure(db)
+	userInfrastructure := infrastructure.NewUserInfrastructure(db)
 
 	/*** 2. usecase層でdomain層を使うためにdomain層のインターフェースを渡す usecase -> domain ***/
 
-	habitUseCase := usecase.NewHabitUseCase(habitPersistence)
+	habitUseCase := usecase.NewHabitUseCase(habitInfrastructure)
 
-	userUseCase := usecase.NewUserUseCase(userPersistence)
+	userUseCase := usecase.NewUserUseCase(userInfrastructure)
 
 	/*** 3. usecase層で使用するためのinterface層を準備する ***/
 	habitValidation := validator.NewHabitValidation()

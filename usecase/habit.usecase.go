@@ -36,7 +36,7 @@ func NewHabitUseCase(hr domain.HabitRepository) HabitUseCase {
 // domainのインターフェースを使って、実際に処理を行う
 func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
-	err := huc.hr.CreateHabitPersistence(habit)
+	err := huc.hr.CreateHabitInfrastructure(habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)
@@ -50,7 +50,7 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
 func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
-	err := huc.hr.UpdateHabitPersistence(habit)
+	err := huc.hr.UpdateHabitInfrastructure(habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)
@@ -63,7 +63,7 @@ func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
 func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) error {
 
-	err := huc.hr.DeleteHabitPersistence(habitID, userID, habit)
+	err := huc.hr.DeleteHabitInfrastructure(habitID, userID, habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)
@@ -76,7 +76,7 @@ func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) er
 
 func (huc *habitUseCase) GetAllHabitByUserID(user *model.User, habit *[]model.Habit) (*[]model.Habit, error) {
 
-	err := huc.hr.GetAllHabitByUserIDPersistence(user, habit)
+	err := huc.hr.GetAllHabitByUserIDInfrastructure(user, habit)
 	if err != nil {
 		// hu.rl.SendErrorResponseLogic(w, "Failed to create habit", http.StatusInternalServerError)-> ここではこれは行わない -> 次回のリファクタリングの段階で、エラーハンドリングを終わらせる！
 		log.Println(err)

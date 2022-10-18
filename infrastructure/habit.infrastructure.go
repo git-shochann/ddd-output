@@ -15,17 +15,17 @@ import (
 
 // 以下の全処理はDBの処理なのでDBのメソッドとして定義する
 
-type habitPersistence struct {
+type habitInfrastructure struct {
 	Conn *gorm.DB
 }
 
 // ここは infrastructure層だけど、domain層のインターフェースを返す
-func NewHabitPersistence(conn *gorm.DB) domain.HabitRepository {
-	return &habitPersistence{Conn: conn}
+func NewHabitInfrastructure(conn *gorm.DB) domain.HabitRepository {
+	return &habitInfrastructure{Conn: conn}
 }
 
-// habitPersistence構造体のメソッドとして定義する
-func (h *habitPersistence) CreateHabitPersistence(habit *model.Habit) error {
+// habitInfrastructure構造体のメソッドとして定義する
+func (h *habitInfrastructure) CreateHabitInfrastructure(habit *model.Habit) error {
 
 	// DB接続の用意
 	db := h.Conn
@@ -38,7 +38,7 @@ func (h *habitPersistence) CreateHabitPersistence(habit *model.Habit) error {
 
 }
 
-func (h *habitPersistence) UpdateHabitPersistence(habit *model.Habit) error {
+func (h *habitInfrastructure) UpdateHabitInfrastructure(habit *model.Habit) error {
 
 	db := h.Conn
 
@@ -57,7 +57,7 @@ func (h *habitPersistence) UpdateHabitPersistence(habit *model.Habit) error {
 	return nil
 }
 
-func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *model.Habit) error {
+func (h *habitInfrastructure) DeleteHabitInfrastructure(habitID, userID int, habit *model.Habit) error {
 
 	// DB接続の用意
 	db := h.Conn
@@ -80,7 +80,7 @@ func (h *habitPersistence) DeleteHabitPersistence(habitID, userID int, habit *mo
 
 //実体を受け取って、実体を書き換えるので、戻り値に指定する必要はない。
 // 旧: 値渡し, 新: ポインタを受け取る
-func (h *habitPersistence) GetAllHabitByUserIDPersistence(user *model.User, habit *[]model.Habit) error {
+func (h *habitInfrastructure) GetAllHabitByUserIDInfrastructure(user *model.User, habit *[]model.Habit) error {
 
 	// habitテーブル内の外部キーであるuseridで全てを取得する
 	// fmt.Printf("u.ID: %v\n", u.ID)     // 1

@@ -12,17 +12,17 @@ import (
 // エラーハンドリング
 // https://gorm.io/ja_JP/docs/error_handling.html
 
-type userPersistence struct {
+type userInfrastructure struct {
 	Conn *gorm.DB
 }
 
 // ここは infrastructure層だけど、domain層のインターフェースを返す
-func NewUserPersistence(conn *gorm.DB) domain.UserRepository {
-	return &userPersistence{Conn: conn}
+func NewUserInfrastructure(conn *gorm.DB) domain.UserRepository {
+	return &userInfrastructure{Conn: conn}
 }
 
 // ポインタ渡し -> 元の実体を書き換えるので
-func (u userPersistence) CreateUser(user *model.User) error {
+func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 
 	// メソッドとして定義しているのでフィールドにアクセスして実行する
 	db := u.Conn
@@ -36,7 +36,7 @@ func (u userPersistence) CreateUser(user *model.User) error {
 
 // Emailを元に重複していないか検索をする
 // User構造体の値はなぜ必要？ -> 結果を格納するため(out) -> First(out interface{}, where ...interface{}) *gorm.DB
-func (u userPersistence) GetUserByEmail(email string) (*model.User, error) {
+func (u userInfrastructure) GetUserByEmailInfrastructure(email string) (*model.User, error) {
 
 	// DB接続の設定
 	db := u.Conn

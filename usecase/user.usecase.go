@@ -27,7 +27,7 @@ func NewUserUseCase(ur domain.UserRepository) UserUseCase {
 
 func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
-	if err := uuc.ur.CreateUser(user); err != nil {
+	if err := uuc.ur.CreateUserInfrastructure(user); err != nil {
 		log.Println(err)
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
 func (uuc *userUseCase) GetUserByEmail(email string) (*model.User, error) {
 
-	user, err := uuc.ur.GetUserByEmail(email)
+	user, err := uuc.ur.GetUserByEmailInfrastructure(email)
 	if err != nil {
 		log.Println(err)
 		return nil, err
