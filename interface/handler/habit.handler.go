@@ -50,21 +50,21 @@ func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
 }
 
-// ** interface層では具体的なロジックを書くのは発生しない ** //
-
 // main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
 func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		// ここで返ってくるエラー型は数種類ある
+		hh.ru.SendErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 
 	// Bodyの読み込み
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
