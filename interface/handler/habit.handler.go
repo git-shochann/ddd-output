@@ -64,7 +64,6 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// Bodyの読み込み
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
@@ -93,7 +92,8 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 保存処理
 	newHabit, err := hh.huc.CreateHabit(&habit) // -> usecase層に依存
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to create habit", http.StatusBadRequest)
+		// ここで返ってくるエラーは数種類ある ->
+		hh.ru.SendErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 

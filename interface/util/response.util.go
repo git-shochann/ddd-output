@@ -37,7 +37,6 @@ func (rl responseUtil) SendResponse(w http.ResponseWriter, response []byte, code
 }
 
 // ステータスコード200以外のレスポンスで使用
-// message: err.Error() とする
 func (rl responseUtil) SendErrorResponse(w http.ResponseWriter, err error, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
