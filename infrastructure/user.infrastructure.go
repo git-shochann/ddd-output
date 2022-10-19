@@ -28,6 +28,7 @@ func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 	db := u.Conn
 
 	if err := db.Create(u).Error; err != nil {
+		err = NewDbErr("faild to create user", err)
 		return err
 	}
 	return nil
@@ -45,6 +46,7 @@ func (u userInfrastructure) GetUserByEmailInfrastructure(email string) (*model.U
 	// 検索する
 	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
 		// *Userと戻り値を設定しないと、nilで返せない。Userとするとゼロ値が埋められた構造体が返ってしまうので。
+		err = NewDbErr("faild to get user", err)
 		return nil, err
 	}
 

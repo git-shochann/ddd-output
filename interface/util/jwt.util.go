@@ -42,8 +42,7 @@ func (jl jwtUtil) CreateJWTToken(u *model.User) (string, error) {
 	// 引数にtoken.SignedString(os.Getenv("JWTSIGNKEY")) だとエラー
 	jwtToken, err := token.SignedString([]byte(os.Getenv("JWTSIGNKEY")))
 	if err != nil {
-
-		return "",
+		return "", err
 	}
 
 	return jwtToken, nil
