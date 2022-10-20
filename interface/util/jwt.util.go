@@ -4,7 +4,7 @@ package util
 
 import (
 	"ddd/domain/model"
-	"ddd/interface/customerr"
+	"ddd/interface/custom"
 	"fmt"
 	"net/http"
 	"os"
@@ -42,7 +42,7 @@ func (jl jwtUtil) CreateJWTToken(u *model.User) (string, error) {
 	// 引数にtoken.SignedString(os.Getenv("JWTSIGNKEY")) だとエラー
 	jwtToken, err := token.SignedString([]byte(os.Getenv("JWTSIGNKEY")))
 	if err != nil {
-		err = customerr.NewJwtErr("faild to get signed token", err)
+		err = custom.NewJwtErr("faild to get signed token", err)
 		return "", err
 	}
 
@@ -59,7 +59,7 @@ func (jl jwtUtil) CheckJWTToken(r *http.Request) (int, error) {
 	// authrizationが別の種類だとpanic発生するので以下のように書き換え
 	// 文字列がBearerで始まるかどうか検証
 	if !strings.HasPrefix(tokenString, "Bearer ") {
-		return 0, customerr.ErrInvalidToken // errorインターフェースの作成
+		return 0, custom.ErrInvalidToken // errorインターフェースの作成
 	}
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
@@ -68,7 +68,7 @@ func (jl jwtUtil) CheckJWTToken(r *http.Request) (int, error) {
 
 		// 型アサーション -> algの検証を行う
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, customerr.ErrInvalidSignature
+			return nil, custom.ErrInvalidSignature
 		}
 
 		// 暗号鍵を返さなくてないいけないとドキュメントに書いてある。SigningMethodHMACのキーは[]byteで返してあげる
@@ -82,13 +82,13 @@ func (jl jwtUtil) CheckJWTToken(r *http.Request) (int, error) {
 
 	// 何らかのエラー
 	if err != nil {
-		err = customerr.NewJwtErr("failed to parse token", err)
+		err = custom.NewJwtErr("failed to parse token", err)
 		return 0, err
 	}
 
 	// これは？
 	if !parsedToken.Valid {
-		return 0, customerr.ErrInvalidToken
+		return 0, custom.ErrInvalidToken
 	}
 
 	// user_idを取り出したい
@@ -96,7 +96,7 @@ func (jl jwtUtil) CheckJWTToken(r *http.Request) (int, error) {
 	assertionToken, ok := parsedToken.Claims.(jwt.MapClaims)
 	fmt.Printf("value: %+v\n", assertionToken)
 	if !ok {
-		return 0, customerr.ErrAssertType
+		return 0, custom.ErrAssertType
 	}
 
 	// map[string]interface{} -> {"string":"interface{}"}
@@ -112,7 +112,7 @@ func (jl jwtUtil) CheckJWTToken(r *http.Request) (int, error) {
 	// 再度型アサーション
 	assertionUserID, ok := assertionToken["user_id"].(float64)
 	if !ok {
-		return 0, customerr.ErrAssertType
+		return 0, custom.ErrAssertType
 	}
 
 	// 一応user_idを返す いずれ必要であれば*Tokenを返してあげる

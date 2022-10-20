@@ -11,7 +11,7 @@ import (
 
 type ResponseUtil interface {
 	SendResponse(w http.ResponseWriter, response []byte, code int) error
-	SendErrorResponse(w http.ResponseWriter, err error, code int) error
+	SendErrorResponse(w http.ResponseWriter, message string, code int) error
 	SendAuthResponse(w http.ResponseWriter, user *model.User, code int) error
 }
 
@@ -37,11 +37,11 @@ func (rl responseUtil) SendResponse(w http.ResponseWriter, response []byte, code
 }
 
 // ステータスコード200以外のレスポンスで使用
-func (rl responseUtil) SendErrorResponse(w http.ResponseWriter, err error, code int) error {
+func (rl responseUtil) SendErrorResponse(w http.ResponseWriter, message string, code int) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	response := map[string]error{
-		"message": err,
+	response := map[string]string{
+		"message": message,
 	}
 	// jsonに変換する
 	responseBody, err := json.Marshal(response)

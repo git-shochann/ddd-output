@@ -1,4 +1,4 @@
-package customerr
+package custom
 
 import "errors"
 
@@ -6,20 +6,20 @@ import "errors"
 
 // *** 独自エラーの作成 ここから *** //
 
-type jwtErr struct {
+type JwtErr struct {
 	message      string
 	innerMessage error
 }
 
-func (e *jwtErr) Error() string {
+func (e *JwtErr) Error() string {
 	return e.message
 }
 
 // *** 独自エラーの作成 ここまで *** //
 
 // 戻り値で設定するのは`型`ね
-func NewJwtErr(message string, innerMessage error) *jwtErr {
-	return &jwtErr{message, innerMessage} // これは`値`ね
+func NewJwtErr(message string, innerMessage error) *JwtErr {
+	return &JwtErr{message, innerMessage} // これは`値`ね
 }
 
 var (

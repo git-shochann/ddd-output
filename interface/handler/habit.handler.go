@@ -4,12 +4,15 @@ package handler
 
 import (
 	"ddd/domain/model"
+	"ddd/interface/custom"
 	"ddd/interface/util"
 	"ddd/interface/validator"
 	"ddd/usecase"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -56,8 +59,39 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		// ここで返ってくるエラー型は数種類ある
-		hh.ru.SendErrorResponse(w, err, http.StatusBadRequest)
+
+		log.Println(err) // ログに出力する
+
+		// ここで返ってくるエラー型は4種類あるのでエラー型によって処理を分岐する
+
+		// ErrInvalidToken
+		// ErrInvalidSignature
+		// ErrAssertType
+		// jwtErr
+
+		var jwtErr *custom.JwtErr
+		switch {
+		case errors.Is(err, custom.ErrInvalidToken):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrInvalidSignature):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrAssertType):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, jwtErr):
+			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		}
+
+		switch err {
+		case custom.ErrInvalidToken:
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case custom.ErrInvalidSignature:
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case custom.ErrAssertType:
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case jwtErr:
+			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		}
+
 		return
 	}
 
