@@ -20,6 +20,9 @@ import (
 
 func main() {
 
+	loggingUtil := util.NewLoggingUtil()
+	loggingUtil.LoggingSetting()
+
 	db := config.ConnectDB()
 
 	/*** 1. infrastructure層からdomain層をインターフェースを提供する ***/

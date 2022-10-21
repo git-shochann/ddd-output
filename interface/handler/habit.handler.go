@@ -133,11 +133,11 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to create habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occuredunknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -175,7 +175,7 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -232,11 +232,11 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to update habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -244,7 +244,7 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 	response, err := json.Marshal(updatedHabit)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to encode json", http.StatusBadRequest)
 		return
 	}
 
@@ -270,7 +270,7 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -283,7 +283,7 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 	habitID, err := strconv.Atoi(habitIDStr)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "something wrong", http.StatusBadRequest)
 		return
 	}
 
@@ -297,11 +297,11 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to delete habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -331,7 +331,7 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
 		}
 
 		return
@@ -352,7 +352,7 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to get all habit", http.StatusBadRequest)
 		default:
@@ -364,7 +364,7 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 
 	response, err := json.Marshal(allHabit)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
