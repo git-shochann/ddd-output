@@ -161,7 +161,23 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		log.Println(err)
+		var jwtErr *custom.JwtErr
+
+		switch {
+		// error型の変数を引数に取る
+		case errors.Is(err, custom.ErrInvalidToken):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrInvalidSignature):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrAssertType):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, jwtErr):
+			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -208,8 +224,21 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedHabit, err := hh.huc.UpdateHabit(&habit)
+
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to update habit", http.StatusBadRequest)
+		log.Println(err)
+
+		var DbErr *infrastructure.DbErr
+
+		switch {
+		case errors.Is(err, infrastructure.ErrRecordNotFound):
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+		case errors.Is(err, DbErr):
+			hh.ru.SendErrorResponse(w, "failed to update habit", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -227,7 +256,23 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		log.Println(err)
+		var jwtErr *custom.JwtErr
+
+		switch {
+		// error型の変数を引数に取る
+		case errors.Is(err, custom.ErrInvalidToken):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrInvalidSignature):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrAssertType):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, jwtErr):
+			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -246,7 +291,19 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 	err = hh.huc.DeleteHabit(habitID, userID, &habit)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to delete habit", http.StatusBadRequest)
+		log.Println(err)
+
+		var DbErr *infrastructure.DbErr
+
+		switch {
+		case errors.Is(err, infrastructure.ErrRecordNotFound):
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+		case errors.Is(err, DbErr):
+			hh.ru.SendErrorResponse(w, "failed to delete habit", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -260,7 +317,23 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	// JWTの検証
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to authenticate", http.StatusBadRequest)
+		log.Println(err)
+		var jwtErr *custom.JwtErr
+
+		switch {
+		// error型の変数を引数に取る
+		case errors.Is(err, custom.ErrInvalidToken):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrInvalidSignature):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, custom.ErrAssertType):
+			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
+		case errors.Is(err, jwtErr):
+			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -273,7 +346,19 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	var habit []model.Habit
 	allHabit, err := hh.huc.GetAllHabitByUserID(&user, &habit) // 旧: 値を渡す, 新: ポインタ(アドレス)を渡すことでしっかりと返却された
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to get all habit", http.StatusBadRequest)
+		log.Println(err)
+
+		var DbErr *infrastructure.DbErr
+
+		switch {
+		case errors.Is(err, infrastructure.ErrRecordNotFound):
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+		case errors.Is(err, DbErr):
+			hh.ru.SendErrorResponse(w, "failed to get all habit", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
