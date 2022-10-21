@@ -20,6 +20,9 @@ import (
 
 func main() {
 
+	envUtil := util.NewEnvUtil()
+	envUtil.LoadEnv()
+
 	loggingUtil := util.NewLoggingUtil()
 	loggingUtil.LoggingSetting()
 

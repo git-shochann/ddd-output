@@ -1,0 +1,22 @@
+services:
+  # DBのみコンテナ化
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      # 環境変数から取得
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      TZ: "Asia/Tokyo"
+    # ビルド後実行するコマンド
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    # ホストマシンのディレクトリ:コンテナのディレクトリ
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    # ホストマシンとコンテナのポートフォワードを設定
+    ports:
+      - 3306:3306
