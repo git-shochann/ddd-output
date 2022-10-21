@@ -4,7 +4,6 @@ package validator
 
 import (
 	"ddd/domain/model"
-	"fmt"
 
 	"github.com/go-playground/validator"
 )
@@ -26,9 +25,9 @@ func NewUserValidation() UserValidation {
 func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpValidation) (string, error) {
 
 	validate := validator.New()
-	err := validate.Struct(&UserSignUpValidation)
+	err := validate.Struct(UserSignUpValidation)
 
-	fmt.Printf("err: %v\n", err)
+	// WIP ->
 
 	var errorMessage string
 
@@ -57,7 +56,7 @@ func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpV
 func (uv userValidation) SigninValidator(UserSignInValidation *model.UserSignInValidation) (string, error) {
 
 	validate := validator.New()
-	err := validate.Struct(&UserSignInValidation)
+	err := validate.Struct(UserSignInValidation)
 
 	var errorMessage string
 

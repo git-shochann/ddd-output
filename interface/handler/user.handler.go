@@ -83,7 +83,7 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, DbErr):
 			uh.ru.SendErrorResponse(w, "failed to create user", http.StatusBadRequest)
 		default:
-			uh.ru.SendErrorResponse(w, "occured unknown error ", http.StatusInternalServerError)
+			uh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 		return
 	}

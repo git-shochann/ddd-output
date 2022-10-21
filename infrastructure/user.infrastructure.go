@@ -27,7 +27,7 @@ func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 	// メソッドとして定義しているのでフィールドにアクセスして実行する
 	db := u.Conn
 
-	if err := db.Create(u).Error; err != nil {
+	if err := db.Create(user).Error; err != nil {
 		err = NewDbErr("faild to create user", err)
 		return err
 	}

@@ -4,6 +4,7 @@ package validator
 
 import (
 	"ddd/domain/model"
+	"fmt"
 
 	"github.com/go-playground/validator"
 )
@@ -19,6 +20,8 @@ func NewHabitValidation() HabitValidation {
 }
 
 func (hv habitValidation) CreateHabitValidator(CreateHabitValidation *model.CreateHabitValidation) (string, error) {
+
+	fmt.Println("Debug")
 
 	validate := validator.New()
 	err := validate.Struct(&CreateHabitValidation)

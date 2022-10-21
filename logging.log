@@ -59,3 +59,25 @@ net/http.(*conn).serve(0x140003272c0, {0x104e3ca60, 0x1400007f9e0})
 	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:1929 +0xb6c
 created by net/http.(*Server).Serve
 	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:3033 +0x4b8
+2022/10/21 18:20:33 server.go:3159: http: panic serving [::1]:64649: interface conversion: error is *validator.InvalidValidationError, not validator.ValidationErrors
+goroutine 52 [running]:
+net/http.(*conn).serve.func1(0x140003a7220)
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:1801 +0xdc
+panic({0x10131f100, 0x1400031ff20})
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/runtime/panic.go:1052 +0x2ac
+ddd/interface/validator.userValidation.SignupValidator({}, 0x140003b2a00)
+	/Users/sho/Coding/go/src/ddd-output/interface/validator/user.validator.go:37 +0x31c
+ddd/interface/handler.(*userHandler).SignUpFunc(0x140003e0280, {0x101376830, 0x140003fe0e0}, 0x14000408200)
+	/Users/sho/Coding/go/src/ddd-output/interface/handler/user.handler.go:62 +0x1f8
+net/http.HandlerFunc.ServeHTTP(0x140003a9680, {0x101376830, 0x140003fe0e0}, 0x14000408200)
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:2046 +0x40
+github.com/gorilla/mux.(*Router).ServeHTTP(0x140003e4000, {0x101376830, 0x140003fe0e0}, 0x14000408000)
+	/Users/sho/go/pkg/mod/github.com/gorilla/mux@v1.8.0/mux.go:210 +0x1e4
+net/http.serverHandler.ServeHTTP({0x140003fe000}, {0x101376830, 0x140003fe0e0}, 0x14000408000)
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:2878 +0x444
+net/http.(*conn).serve(0x140003a7220, {0x101378a80, 0x1400031f9e0})
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:1929 +0xb6c
+created by net/http.(*Server).Serve
+	/opt/homebrew/Cellar/go/1.17.3/libexec/src/net/http/server.go:3033 +0x4b8
+2022/10/21 18:56:15 user.handler.go:80: failed to create user faild to create user
+2022/10/21 19:20:44 user.handler.go:80: failed to create user faild to create user
