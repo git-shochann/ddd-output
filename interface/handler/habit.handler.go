@@ -5,7 +5,7 @@ package handler
 import (
 	"ddd/domain/model"
 	"ddd/infrastructure"
-	"ddd/interface/custom"
+	"ddd/interface/customerr"
 	"ddd/interface/util"
 	"ddd/interface/validator"
 	"ddd/usecase"
@@ -70,15 +70,15 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		// ErrAssertType
 		// jwtErr
 
-		var jwtErr *custom.JwtErr
+		var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
-		case errors.Is(err, custom.ErrInvalidToken):
+		case errors.Is(err, customerr.ErrInvalidToken):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrInvalidSignature):
+		case errors.Is(err, customerr.ErrInvalidSignature):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrAssertType):
+		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
@@ -162,15 +162,15 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
-		var jwtErr *custom.JwtErr
+		var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
-		case errors.Is(err, custom.ErrInvalidToken):
+		case errors.Is(err, customerr.ErrInvalidToken):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrInvalidSignature):
+		case errors.Is(err, customerr.ErrInvalidSignature):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrAssertType):
+		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
@@ -257,15 +257,15 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
-		var jwtErr *custom.JwtErr
+		var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
-		case errors.Is(err, custom.ErrInvalidToken):
+		case errors.Is(err, customerr.ErrInvalidToken):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrInvalidSignature):
+		case errors.Is(err, customerr.ErrInvalidSignature):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrAssertType):
+		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
@@ -318,15 +318,15 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 	userID, err := hh.ju.CheckJWTToken(r)
 	if err != nil {
 		log.Println(err)
-		var jwtErr *custom.JwtErr
+		var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
-		case errors.Is(err, custom.ErrInvalidToken):
+		case errors.Is(err, customerr.ErrInvalidToken):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrInvalidSignature):
+		case errors.Is(err, customerr.ErrInvalidSignature):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, custom.ErrAssertType):
+		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
