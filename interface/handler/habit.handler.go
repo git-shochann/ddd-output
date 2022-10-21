@@ -4,6 +4,7 @@ package handler
 
 import (
 	"ddd/domain/model"
+	"ddd/infrastructure"
 	"ddd/interface/custom"
 	"ddd/interface/util"
 	"ddd/interface/validator"
@@ -70,7 +71,9 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		// jwtErr
 
 		var jwtErr *custom.JwtErr
+
 		switch {
+		// error型の変数を引数に取る
 		case errors.Is(err, custom.ErrInvalidToken):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, custom.ErrInvalidSignature):
@@ -79,17 +82,8 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
-		}
-
-		switch err {
-		case custom.ErrInvalidToken:
-			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case custom.ErrInvalidSignature:
-			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case custom.ErrAssertType:
-			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case jwtErr:
-			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return
@@ -98,6 +92,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// Bodyの読み込み
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
@@ -106,12 +101,14 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	var habitValidation model.CreateHabitValidation
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
+		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
 		return
 	}
 
 	errorMessage, err := hh.hv.CreateHabitValidator(&habitValidation)
 	if err != nil {
+		log.Println(err)
 		hh.ru.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
@@ -126,14 +123,30 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	// 保存処理
 	newHabit, err := hh.huc.CreateHabit(&habit) // -> usecase層に依存
 	if err != nil {
-		// ここで返ってくるエラーは数種類ある ->
-		hh.ru.SendErrorResponse(w, err, http.StatusBadRequest)
+		log.Println(err)
+
+		// エラーは2種類
+		// ErrRecordNotFound
+		// DbErr
+
+		var DbErr *infrastructure.DbErr
+
+		switch {
+		case errors.Is(err, infrastructure.ErrRecordNotFound):
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+		case errors.Is(err, DbErr):
+			hh.ru.SendErrorResponse(w, "failed to create habit", http.StatusBadRequest)
+		default:
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+		}
+
 		return
 	}
 
 	// 登録が完了したhabitを上書きしてレスポンスとして返すためにjson形式にする([]byte)
 	response, err := json.Marshal(newHabit)
 	if err != nil {
+		log.Println(err)
 		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
 		return
 	}
