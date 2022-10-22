@@ -5,6 +5,7 @@ package infrastructure
 import (
 	"ddd/domain"
 	"ddd/domain/model"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -28,7 +29,9 @@ func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 	db := u.Conn
 
 	if err := db.Create(user).Error; err != nil {
-		err = NewDbErr("faild to create user", err)
+		fmt.Println(err)
+		err = NewDbErr("failed to create user", err)
+		fmt.Println(err)
 		return err
 	}
 	return nil
