@@ -29,6 +29,8 @@ func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
 	if err := uuc.ur.CreateUserInfrastructure(user); err != nil {
 		err := fmt.Errorf("userUseCase: failed to create user %w", err)
+		fmt.Printf("err: %v\n", err) // 	err: userUseCase: failed to create user userInfrastructure: failed to create user
+		fmt.Printf("err: %T\n", err) // 	*fmt.wrapError
 		return nil, err
 	}
 
