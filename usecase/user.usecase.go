@@ -28,7 +28,7 @@ func NewUserUseCase(ur domain.UserRepository) UserUseCase {
 func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
 	if err := uuc.ur.CreateUserInfrastructure(user); err != nil {
-		err := fmt.Errorf("failed to create user %s", err)
+		err := fmt.Errorf("userUseCase: failed to create user %w", err)
 		return nil, err
 	}
 
@@ -40,7 +40,7 @@ func (uuc *userUseCase) GetUserByEmail(email string) (*model.User, error) {
 
 	user, err := uuc.ur.GetUserByEmailInfrastructure(email)
 	if err != nil {
-		err := fmt.Errorf("failed to get user %s", err)
+		err := fmt.Errorf("userUseCase: failed to get user %w", err)
 		return nil, err
 	}
 	// 書き変わったuserを返す

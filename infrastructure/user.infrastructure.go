@@ -5,7 +5,6 @@ package infrastructure
 import (
 	"ddd/domain"
 	"ddd/domain/model"
-	"fmt"
 
 	"github.com/jinzhu/gorm"
 )
@@ -29,8 +28,9 @@ func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 	db := u.Conn
 
 	if err := db.Create(user).Error; err != nil {
-		err = NewDbErr("failed to create user", err)
-		fmt.Printf("err: %+v\n", err) // failed to create user
+		err = NewDbErr("userInfrastructure: failed to create user", err)
+		// fmt.Printf("err: %v\n", err) // err: userInfrastructure : failed to create user
+		// fmt.Printf("err: %T\n", err) // err: *infrastructure.DbErr
 		return err
 	}
 	return nil
@@ -48,7 +48,7 @@ func (u userInfrastructure) GetUserByEmailInfrastructure(email string) (*model.U
 	// 検索する
 	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
 		// *Userと戻り値を設定しないと、nilで返せない。Userとするとゼロ値が埋められた構造体が返ってしまうので。
-		err = NewDbErr("faild to get user", err)
+		err = NewDbErr("userInfrastructure: faild to get user", err)
 		return nil, err
 	}
 

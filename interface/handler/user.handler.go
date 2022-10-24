@@ -10,6 +10,7 @@ import (
 	"ddd/usecase"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -76,6 +77,10 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 
 	// 保存処理
 	newUser, err := uh.uuc.CreateUser(&createUser)
+	fmt.Printf("interface err value: %+v\n", err) // userUseCase: failed to create user userInfrastructure: failed to create user
+	fmt.Printf("interface err type : %T\n", err)  // *fmt.wrapError
+	// var DbErr *infrastructure.DbErr
+	// fmt.Println(errors.Is(err, DbErr)) // false...?
 	if err != nil {
 		log.Println(err)
 		var DbErr *infrastructure.DbErr

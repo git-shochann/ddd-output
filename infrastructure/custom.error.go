@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"errors"
-	"fmt"
 )
 
 // 独自エラーの作成
@@ -18,8 +17,7 @@ func (e *DbErr) Error() string {
 }
 
 func NewDbErr(message string, innerMessage error) *DbErr {
-	fmt.Printf("innerMessage: %v\n", innerMessage) // innerMessage: Error 1062: Duplicate entry 'tarotaro2@gmail.com' for key 'users.email'
-	return &DbErr{message, innerMessage}           // 構造体の初期化 + ポインタ化 + 関数に戻り値として返す
+	return &DbErr{message, innerMessage} // 構造体の初期化 + ポインタ化 + 関数に戻り値として返す
 }
 
 // Errから始める これも慣習
