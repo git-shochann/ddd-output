@@ -42,7 +42,7 @@ func (h *habitInfrastructure) UpdateHabitInfrastructure(habit *model.Habit) erro
 
 	db := h.Conn
 
-	result := db.Model(h).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
+	result := db.Model(habit).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
 
 	if err := result.Error; err != nil {
 		err = NewDbErr("failed to update habit", err)
