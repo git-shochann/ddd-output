@@ -29,9 +29,8 @@ func (u userInfrastructure) CreateUserInfrastructure(user *model.User) error {
 	db := u.Conn
 
 	if err := db.Create(user).Error; err != nil {
-		fmt.Println(err)
 		err = NewDbErr("failed to create user", err)
-		fmt.Println(err)
+		fmt.Printf("err: %+v\n", err) // failed to create user
 		return err
 	}
 	return nil

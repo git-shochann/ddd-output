@@ -27,8 +27,6 @@ func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpV
 	validate := validator.New()
 	err := validate.Struct(UserSignUpValidation)
 
-	// WIP ->
-
 	var errorMessage string
 
 	if err != nil {
