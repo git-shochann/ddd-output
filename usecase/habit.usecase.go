@@ -38,7 +38,7 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
 	err := huc.hr.CreateHabitInfrastructure(habit)
 	if err != nil {
-		err := fmt.Errorf("failed to create habit %s", err)
+		err := fmt.Errorf("habit usecase: failed to create habit %w", err)
 		return nil, err
 	}
 
@@ -51,7 +51,7 @@ func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
 	err := huc.hr.UpdateHabitInfrastructure(habit)
 	if err != nil {
-		err := fmt.Errorf("failed to update habit %s", err)
+		err := fmt.Errorf("habit usecase: failed to update habit %w", err)
 		return nil, err
 	}
 
@@ -63,7 +63,7 @@ func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) er
 
 	err := huc.hr.DeleteHabitInfrastructure(habitID, userID, habit)
 	if err != nil {
-		err := fmt.Errorf("failed to delete habit %s", err)
+		err := fmt.Errorf("habit usecase: failed to delete habit %w", err)
 		return err
 	}
 
@@ -75,7 +75,7 @@ func (huc *habitUseCase) GetAllHabitByUserID(user *model.User, habit *[]model.Ha
 
 	err := huc.hr.GetAllHabitByUserIDInfrastructure(user, habit)
 	if err != nil {
-		err := fmt.Errorf("failed to get all habit %s", err)
+		err := fmt.Errorf("habit usecase: failed to get all habit %w", err)
 		return nil, err
 	}
 

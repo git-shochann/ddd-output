@@ -80,7 +80,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, jwtErr):
+		case errors.As(err, &jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
 			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
@@ -93,7 +93,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
@@ -102,7 +102,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
 		log.Println(err)
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
@@ -134,10 +134,10 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
 			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
-		case errors.Is(err, DbErr):
+		case errors.As(err, &DbErr):
 			hh.ru.SendErrorResponse(w, "failed to create habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occuredunknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return
@@ -172,10 +172,10 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, jwtErr):
+		case errors.As(err, &jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return
@@ -190,14 +190,14 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 	habitID, err := strconv.Atoi(habitIDStr)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Something wrong", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "something wrong", http.StatusBadRequest)
 		return
 	}
 
 	// Bodyを検証
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
@@ -205,7 +205,7 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 	var habitValidation model.CreateHabitValidation
 	err = json.Unmarshal(reqBody, &habitValidation)
 	if err != nil {
-		hh.ru.SendErrorResponse(w, "Failed to read json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
@@ -267,10 +267,10 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, jwtErr):
+		case errors.As(err, &jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return

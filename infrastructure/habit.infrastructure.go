@@ -30,7 +30,7 @@ func (h *habitInfrastructure) CreateHabitInfrastructure(habit *model.Habit) erro
 	db := h.Conn
 
 	if err := db.Create(habit).Error; err != nil {
-		err = NewDbErr("faild to create habit", err)
+		err = NewDbErr("habit infrastructure: faild to create habit", err)
 		return err
 	}
 	// fmt.Printf("h: %v\n", h) // h: {{2 2022-09-07 13:47:28.774095 +0900 JST m=+3.267163626 2022-09-07 13:47:28.774095 +0900 JST m=+3.267163626 <nil>} hello false 1}
@@ -45,7 +45,7 @@ func (h *habitInfrastructure) UpdateHabitInfrastructure(habit *model.Habit) erro
 	result := db.Model(habit).Where("id = ? AND user_id = ?", habit.Model.ID, habit.UserID).Update("content", habit.Content)
 
 	if err := result.Error; err != nil {
-		err = NewDbErr("failed to update habit", err)
+		err = NewDbErr("habit infrastructure: failed to update habit", err)
 		return err
 	}
 
@@ -66,7 +66,7 @@ func (h *habitInfrastructure) DeleteHabitInfrastructure(habitID, userID int, hab
 	result := db.Where("id = ? AND user_id = ?", habitID, userID).Delete(habit)
 
 	if err := result.Error; err != nil {
-		err = NewDbErr("failed to delete habit", err)
+		err = NewDbErr("habit infrastructure: failed to delete habit", err)
 		return err
 	}
 
@@ -90,7 +90,7 @@ func (h *habitInfrastructure) GetAllHabitByUserIDInfrastructure(user *model.User
 
 	// 全て取得したい
 	if err := db.Where("user_id = ?", user.ID).Find(habit).Error; err != nil {
-		err = NewDbErr("failed to get all habit", err)
+		err = NewDbErr("habit infrastructure: failed to get all habit", err)
 		return err
 	}
 	// fmt.Printf("habit: %v\n", habit) // habit: [{{2 2022-09-07 04:47:29 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is test false 1} {{3 2022-09-07 04:49:30 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} aaa false 1} {{4 2022-09-07 04:49:31 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is test false 1} {{5 2022-09-07 04:50:22 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} This is testbbb false 1} {{6 2022-09-07 04:55:55 +0000 UTC 2022-09-07 07:23:22 +0000 UTC <nil>} aaadsadsa false 1}]
