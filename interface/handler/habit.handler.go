@@ -328,10 +328,10 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ru.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.Is(err, jwtErr):
+		case errors.As(err, &jwtErr):
 			hh.ru.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return
