@@ -21,6 +21,6 @@ func NewEnvUtil() EnvUtil {
 func (ev envUtil) LoadEnv() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Unable to load env file: %v", err)
+		log.Fatalf("unable to load env file: %v", err)
 	}
 }

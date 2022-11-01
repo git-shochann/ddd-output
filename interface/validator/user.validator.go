@@ -37,13 +37,13 @@ func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpV
 
 			switch fieldName {
 			case "FirstName":
-				errorMessage = "Invalid First Name"
+				errorMessage = "invalid First Name"
 			case "LastName":
-				errorMessage = "Invalid Last Name"
+				errorMessage = "invalid Last Name"
 			case "Email":
-				errorMessage = "Invalid Email"
+				errorMessage = "invalid Email"
 			case "Password":
-				errorMessage = "Invalid Password"
+				errorMessage = "invalid Password"
 			}
 		}
 		return errorMessage, err
@@ -65,9 +65,9 @@ func (uv userValidation) SigninValidator(UserSignInValidation *model.UserSignInV
 
 			switch fieldName {
 			case "Email":
-				errorMessage = "Invalid Email"
+				errorMessage = "invalid Email"
 			case "Password":
-				errorMessage = "Invalid Password"
+				errorMessage = "invalid Password"
 			}
 		}
 		return errorMessage, err

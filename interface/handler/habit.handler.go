@@ -51,7 +51,7 @@ func NewHabitHandler(huc usecase.HabitUseCase, hv validator.HabitValidation, ju 
 func (hh *habitHandler) IndexFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("r.Body: %v\n", r.Body)
 	fmt.Printf("%T\n", w)                   // *http.response構造体
-	fmt.Fprintf(w, "This is Go's Rest API") // メソッド内でw.Write()をするため
+	fmt.Fprintf(w, "this is Go's Rest API") // メソッド内でw.Write()をするため
 }
 
 // main（）のrouter.HandleFunc()の第二引数として以下の関数を渡すだけ
@@ -133,7 +133,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
 		case errors.As(err, &DbErr):
 			hh.ru.SendErrorResponse(w, "failed to create habit", http.StatusBadRequest)
 		default:
@@ -147,7 +147,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	response, err := json.Marshal(newHabit)
 	if err != nil {
 		log.Println(err)
-		hh.ru.SendErrorResponse(w, "Failed to encode json", http.StatusBadRequest)
+		hh.ru.SendErrorResponse(w, "failed to encode json", http.StatusBadRequest)
 		return
 	}
 
@@ -232,11 +232,11 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "record not found", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to update habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return
@@ -297,11 +297,11 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			hh.ru.SendErrorResponse(w, "not found record", http.StatusBadRequest)
+			hh.ru.SendErrorResponse(w, "recordnot found", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
 			hh.ru.SendErrorResponse(w, "failed to delete habit", http.StatusBadRequest)
 		default:
-			hh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			hh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 
 		return

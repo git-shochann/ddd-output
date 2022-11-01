@@ -92,7 +92,7 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	// createUser -> ポインタ型(アドレス)
 	if err := uh.ru.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
 		log.Println(err)
-		uh.ru.SendErrorResponse(w, "occurred unknown error", http.StatusBadRequest)
+		uh.ru.SendErrorResponse(w, "unknown error occurred", http.StatusBadRequest)
 		return
 	}
 }
@@ -132,7 +132,7 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, DbErr):
 			uh.ru.SendErrorResponse(w, "failed to get user", http.StatusBadRequest)
 		default:
-			uh.ru.SendErrorResponse(w, "occured unknown error", http.StatusInternalServerError)
+			uh.ru.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -146,7 +146,7 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(signInUserValidation.Password))
 	if err != nil {
 		log.Println(err)
-		uh.ru.SendErrorResponse(w, "occured password error", http.StatusInternalServerError)
+		uh.ru.SendErrorResponse(w, "password invalid", http.StatusInternalServerError)
 		return
 	}
 

@@ -31,7 +31,7 @@ func (hv habitValidation) CreateHabitValidator(CreateHabitValidation *model.Crea
 
 			switch fieldName {
 			case "Content":
-				errorMessage = "Invalid Content"
+				errorMessage = "invalid Content"
 
 			}
 		}
