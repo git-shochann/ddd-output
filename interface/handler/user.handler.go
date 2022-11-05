@@ -23,20 +23,20 @@ type UserHandler interface {
 }
 
 type userHandler struct {
-	userUseCase         usecase.UserUseCase      // usecase層
-	userValidation      validator.UserValidation // interface層
-	jwtUtil             util.JwtUtil             // interface層
-	responseUtil        util.ResponseUtil        // interface層
-	encryptPasswordUtil util.EncryptPasswordUtil // interface層
+	UserUseCase         usecase.UserUseCase      // usecase層
+	UserValidation      validator.UserValidation // interface層
+	JwtUtil             util.JwtUtil             // interface層
+	ResponseUtil        util.ResponseUtil        // interface層
+	EncryptPasswordUtil util.EncryptPasswordUtil // interface層
 }
 
 func NewUserHandler(userUseCase usecase.UserUseCase, userValidation validator.UserValidation, jwtUtil util.JwtUtil, responseUtil util.ResponseUtil, encryptPasswordUtil util.EncryptPasswordUtil) UserHandler {
 	return &userHandler{
-		userUseCase:         userUseCase,
-		userValidation:      userValidation,
-		jwtUtil:             jwtUtil,
-		responseUtil:        responseUtil,
-		encryptPasswordUtil: encryptPasswordUtil,
+		UserUseCase:         userUseCase,
+		UserValidation:      userValidation,
+		JwtUtil:             jwtUtil,
+		ResponseUtil:        responseUtil,
+		EncryptPasswordUtil: encryptPasswordUtil,
 	}
 }
 
@@ -46,7 +46,7 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
@@ -55,14 +55,14 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
-	errorMessage, err := uh.userValidation.SignupValidator(&signUpUserValidation)
+	errorMessage, err := uh.UserValidation.SignupValidator(&signUpUserValidation)
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
 
@@ -71,28 +71,28 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		FirstName: signUpUserValidation.FirstName,
 		LastName:  signUpUserValidation.LastName,
 		Email:     signUpUserValidation.Email,
-		Password:  uh.encryptPasswordUtil.EncryptPassword(signUpUserValidation.Password),
+		Password:  uh.EncryptPasswordUtil.EncryptPassword(signUpUserValidation.Password),
 	}
 
 	// 保存処理
-	newUser, err := uh.userUseCase.CreateUser(&createUser)
+	newUser, err := uh.UserUseCase.CreateUser(&createUser)
 
 	if err != nil {
 		log.Println(err)
 		var DbErr *infrastructure.DbErr
 		switch {
 		case errors.As(err, &DbErr):
-			uh.responseUtil.SendErrorResponse(w, "failed to create user", http.StatusBadRequest)
+			uh.ResponseUtil.SendErrorResponse(w, "failed to create user", http.StatusBadRequest)
 		default:
-			uh.responseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			uh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 		return
 	}
 
 	// createUser -> ポインタ型(アドレス)
-	if err := uh.responseUtil.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
+	if err := uh.ResponseUtil.SendAuthResponse(w, newUser, http.StatusOK); err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "unknown error occurred", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "unknown error occurred", http.StatusBadRequest)
 		return
 	}
 }
@@ -102,37 +102,37 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return // router.HandleFunc())の第二引数に関数を渡すだけなので戻り値なし
 	}
 
 	var signInUserValidation model.UserSignInValidation
 	if err := json.Unmarshal(reqBody, &signInUserValidation); err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "failed to read json", http.StatusBadRequest)
 		return
 	}
 
-	errorMessage, err := uh.userValidation.SigninValidator(&signInUserValidation)
+	errorMessage, err := uh.UserValidation.SigninValidator(&signInUserValidation)
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
 	}
 
 	// emailでユーザーを検索する -> 成功したらuserに値が入る
-	user, err := uh.userUseCase.GetUserByEmail(signInUserValidation.Email)
+	user, err := uh.UserUseCase.GetUserByEmail(signInUserValidation.Email)
 	if err != nil {
 		log.Println(err)
 		var DbErr *infrastructure.DbErr
 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
-			uh.responseUtil.SendErrorResponse(w, "record not found", http.StatusBadRequest)
+			uh.ResponseUtil.SendErrorResponse(w, "record not found", http.StatusBadRequest)
 		case errors.Is(err, DbErr):
-			uh.responseUtil.SendErrorResponse(w, "failed to get user", http.StatusBadRequest)
+			uh.ResponseUtil.SendErrorResponse(w, "failed to get user", http.StatusBadRequest)
 		default:
-			uh.responseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
+			uh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -146,13 +146,13 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(signInUserValidation.Password))
 	if err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "password invalid", http.StatusInternalServerError)
+		uh.ResponseUtil.SendErrorResponse(w, "password invalid", http.StatusInternalServerError)
 		return
 	}
 
-	if err := uh.responseUtil.SendAuthResponse(w, user, http.StatusOK); err != nil {
+	if err := uh.ResponseUtil.SendAuthResponse(w, user, http.StatusOK); err != nil {
 		log.Println(err)
-		uh.responseUtil.SendErrorResponse(w, "failed to sign in", http.StatusBadRequest)
+		uh.ResponseUtil.SendErrorResponse(w, "failed to sign in", http.StatusBadRequest)
 		return
 	}
 

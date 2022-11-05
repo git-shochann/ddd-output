@@ -16,12 +16,12 @@ type ResponseUtil interface {
 }
 
 type responseUtil struct {
-	jwtUtil jwtUtil
+	JwtUtil JwtUtil
 }
 
-func NewResponseUtil(jwtUtil jwtUtil) ResponseUtil {
+func NewResponseUtil(jwtUtil JwtUtil) ResponseUtil {
 	return &responseUtil{
-		jwtUtil: jwtUtil,
+		JwtUtil: jwtUtil,
 	}
 }
 
@@ -61,7 +61,7 @@ func (rl responseUtil) SendAuthResponse(w http.ResponseWriter, user *model.User,
 	fmt.Println("SendAuthResponse!")
 
 	// NEW!: 以下のように呼び出す
-	jwtToken, err := rl.jwtUtil.CreateJWTToken(user)
+	jwtToken, err := rl.JwtUtil.CreateJWTToken(user)
 	if err != nil {
 		return err
 	}

@@ -22,12 +22,12 @@ type HabitUseCase interface {
 }
 
 type habitUseCase struct {
-	hr domain.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
+	habitRepository domain.HabitRepository //以下全てdomain層のインターフェース。 この構造体に紐づいているメソッドでそのメソッドを使用したいので！
 }
 
-func NewHabitUseCase(hr domain.HabitRepository) HabitUseCase {
+func NewHabitUseCase(habitRepository domain.HabitRepository) HabitUseCase {
 	return &habitUseCase{
-		hr: hr,
+		habitRepository: habitRepository,
 	}
 }
 
@@ -36,7 +36,7 @@ func NewHabitUseCase(hr domain.HabitRepository) HabitUseCase {
 // domainのインターフェースを使って、実際に処理を行う
 func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
-	err := huc.hr.CreateHabitInfrastructure(habit)
+	err := huc.habitRepository.CreateHabitInfrastructure(habit)
 	if err != nil {
 		err := fmt.Errorf("habit usecase: failed to create habit %w", err)
 		return nil, err
@@ -49,7 +49,7 @@ func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {
 
 func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
-	err := huc.hr.UpdateHabitInfrastructure(habit)
+	err := huc.habitRepository.UpdateHabitInfrastructure(habit)
 	if err != nil {
 		err := fmt.Errorf("habit usecase: failed to update habit %w", err)
 		return nil, err
@@ -61,7 +61,7 @@ func (huc *habitUseCase) UpdateHabit(habit *model.Habit) (*model.Habit, error) {
 
 func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) error {
 
-	err := huc.hr.DeleteHabitInfrastructure(habitID, userID, habit)
+	err := huc.habitRepository.DeleteHabitInfrastructure(habitID, userID, habit)
 	if err != nil {
 		err := fmt.Errorf("habit usecase: failed to delete habit %w", err)
 		return err
@@ -73,7 +73,7 @@ func (huc *habitUseCase) DeleteHabit(habitID, userID int, habit *model.Habit) er
 
 func (huc *habitUseCase) GetAllHabitByUserID(user *model.User, habit *[]model.Habit) (*[]model.Habit, error) {
 
-	err := huc.hr.GetAllHabitByUserIDInfrastructure(user, habit)
+	err := huc.habitRepository.GetAllHabitByUserIDInfrastructure(user, habit)
 	if err != nil {
 		err := fmt.Errorf("habit usecase: failed to get all habit %w", err)
 		return nil, err
