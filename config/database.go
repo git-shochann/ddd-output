@@ -22,7 +22,7 @@ func ConnectDB() *gorm.DB {
 
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		log.Fatalf("Enable load location")
+		log.Fatalf("Unable load location")
 	}
 
 	dsn := mysql.Config{
@@ -39,7 +39,7 @@ func ConnectDB() *gorm.DB {
 	// コネクションプールの生成
 	db, err := gorm.Open("mysql", dsn.FormatDSN())
 	if err != nil {
-		log.Fatalf("Enable Connect to DB %s", err)
+		log.Fatalf("Unable connect to DB %s", err)
 	} else {
 		fmt.Println("Successfully Connected DB")
 	}
