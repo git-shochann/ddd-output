@@ -9,25 +9,23 @@ import (
 )
 
 // まずとりあえず他の層で使えるようにinterfaceを定義する
-type UserValidation interface {
-	SignupValidator(*model.UserSignUpValidation) (string, error)
-	SigninValidator(*model.UserSignInValidation) (string, error)
+type UserValidator interface {
+	SignupValidate(*model.UserSignUpValidation) (string, error)
+	SigninValidate(*model.UserSignInValidation) (string, error)
 }
 
 // ここの構造体で、他の層に依存している(使いたいメソッドを持ったインターフェースはある？)
 type userValidation struct {
 }
 
-func NewUserValidation() UserValidation {
+func NewUserValidation() UserValidator {
 	return &userValidation{}
 }
 
-func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpValidation) (string, error) {
+func (uv *userValidation) SignupValidate(UserSignUpValidation *model.UserSignUpValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(UserSignUpValidation)
-
-	var errorMessage string
 
 	if err != nil {
 
@@ -37,26 +35,26 @@ func (uv userValidation) SignupValidator(UserSignUpValidation *model.UserSignUpV
 
 			switch fieldName {
 			case "FirstName":
-				errorMessage = "invalid First Name"
+				return "Invalid First Name", err
 			case "LastName":
-				errorMessage = "invalid Last Name"
+				return "Invalid Last Name", err
 			case "Email":
-				errorMessage = "invalid Email"
+				return "Invalid Email", err
 			case "Password":
-				errorMessage = "invalid Password"
+				return "Invalid Password", err
+			default:
+				return "Unknown Error", err
 			}
+
 		}
-		return errorMessage, err
 	}
 	return "", err
 }
 
-func (uv userValidation) SigninValidator(UserSignInValidation *model.UserSignInValidation) (string, error) {
+func (uv *userValidation) SigninValidate(UserSignInValidation *model.UserSignInValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(UserSignInValidation)
-
-	var errorMessage string
 
 	if err != nil {
 		for _, fieldErr := range err.(validator.ValidationErrors) {
@@ -65,12 +63,11 @@ func (uv userValidation) SigninValidator(UserSignInValidation *model.UserSignInV
 
 			switch fieldName {
 			case "Email":
-				errorMessage = "invalid Email"
+				return "Invalid Email", err
 			case "Password":
-				errorMessage = "invalid Password"
+				return "Invalid Password", err
 			}
 		}
-		return errorMessage, err
 	}
 	return "", err
 }

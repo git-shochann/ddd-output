@@ -8,22 +8,21 @@ import (
 	"github.com/go-playground/validator"
 )
 
-type HabitValidation interface {
-	CreateHabitValidator(*model.CreateHabitValidation) (string, error)
+// バリデーターを公開してあげる
+type HabitValidator interface {
+	HabitValidate(*model.CreateHabitValidation) (string, error)
 }
 
-type habitValidation struct{}
+type HabitValidation struct{}
 
-func NewHabitValidation() HabitValidation {
-	return &habitValidation{}
+func NewHabitValidation() HabitValidator {
+	return &HabitValidation{}
 }
 
-func (hv habitValidation) CreateHabitValidator(CreateHabitValidation *model.CreateHabitValidation) (string, error) {
+func (chv *HabitValidation) HabitValidate(createHabitValidation *model.CreateHabitValidation) (string, error) {
 
 	validate := validator.New()
-	err := validate.Struct(CreateHabitValidation)
-
-	var errorMessage string
+	err := validate.Struct(createHabitValidation)
 
 	if err != nil {
 		for _, fieldErr := range err.(validator.ValidationErrors) {
@@ -31,11 +30,11 @@ func (hv habitValidation) CreateHabitValidator(CreateHabitValidation *model.Crea
 
 			switch fieldName {
 			case "Content":
-				errorMessage = "invalid Content"
-
+				return "Invalid Content", err
+			default:
+				return "Unknown Error", err
 			}
 		}
-		return errorMessage, err
 	}
 	return "", err
 }

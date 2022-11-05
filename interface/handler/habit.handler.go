@@ -106,7 +106,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := hh.HabitValidation.CreateHabitValidator(&habitValidation)
+	errorMessage, err := hh.HabitValidation.HabitValidate(&habitValidation)
 	if err != nil {
 		log.Println(err)
 		hh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
@@ -209,7 +209,7 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := hh.HabitValidation.CreateHabitValidator(&habitValidation)
+	errorMessage, err := hh.HabitValidation.HabitValidate(&habitValidation)
 	if err != nil {
 		hh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
 		return
