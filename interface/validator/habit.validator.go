@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator"
 )
 
-// バリデーターを公開してあげる
+// バリデーターの窓口を提供する
 type HabitValidator interface {
 	HabitValidate(*model.CreateHabitValidation) (string, error)
 }
