@@ -233,7 +233,7 @@ func (hh *habitHandler) UpdateFunc(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
 			hh.ResponseUtil.SendErrorResponse(w, "record not found", http.StatusBadRequest)
-		case errors.Is(err, DbErr):
+		case errors.As(err, &DbErr):
 			hh.ResponseUtil.SendErrorResponse(w, "failed to update habit", http.StatusBadRequest)
 		default:
 			hh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
@@ -298,7 +298,7 @@ func (hh *habitHandler) DeleteFunc(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
 			hh.ResponseUtil.SendErrorResponse(w, "recordnot found", http.StatusBadRequest)
-		case errors.Is(err, DbErr):
+		case errors.As(err, &DbErr):
 			hh.ResponseUtil.SendErrorResponse(w, "failed to delete habit", http.StatusBadRequest)
 		default:
 			hh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
@@ -353,7 +353,7 @@ func (hh *habitHandler) GetAllHabitFunc(w http.ResponseWriter, r *http.Request) 
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
 			hh.ResponseUtil.SendErrorResponse(w, "not found record", http.StatusBadRequest)
-		case errors.Is(err, DbErr):
+		case errors.As(err, &DbErr):
 			hh.ResponseUtil.SendErrorResponse(w, "failed to get all habit", http.StatusBadRequest)
 		default:
 			hh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)

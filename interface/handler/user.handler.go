@@ -129,7 +129,7 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, infrastructure.ErrRecordNotFound):
 			uh.ResponseUtil.SendErrorResponse(w, "record not found", http.StatusBadRequest)
-		case errors.Is(err, DbErr):
+		case errors.As(err, &DbErr):
 			uh.ResponseUtil.SendErrorResponse(w, "failed to get user", http.StatusBadRequest)
 		default:
 			uh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
