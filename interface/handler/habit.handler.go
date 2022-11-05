@@ -31,14 +31,14 @@ type HabitHandler interface {
 }
 
 type habitHandler struct {
-	HabitUseCase    usecase.HabitUseCase      // usecase層
-	HabitValidation validator.HabitValidation // interface層
-	JwtUtil         util.JwtUtil              // interface層
-	ResponseUtil    util.ResponseUtil         // interface層
+	HabitUseCase    usecase.HabitUseCase     // usecase層
+	HabitValidation validator.HabitValidator // interface層
+	JwtUtil         util.JwtUtil             // interface層
+	ResponseUtil    util.ResponseUtil        // interface層
 }
 
 // ここの構造体のフィールドに書くのは、依存先のインターフェースを書けばOK
-func NewHabitHandler(habitUseCase usecase.HabitUseCase, habitValidation validator.HabitValidation, jwtUtil util.JwtUtil, ResponseUtil util.ResponseUtil) HabitHandler {
+func NewHabitHandler(habitUseCase usecase.HabitUseCase, habitValidation validator.HabitValidator, jwtUtil util.JwtUtil, ResponseUtil util.ResponseUtil) HabitHandler {
 	return &habitHandler{
 		HabitUseCase:    habitUseCase,
 		HabitValidation: habitValidation,

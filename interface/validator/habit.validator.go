@@ -13,13 +13,13 @@ type HabitValidator interface {
 	HabitValidate(*model.CreateHabitValidation) (string, error)
 }
 
-type HabitValidation struct{}
+type habitValidation struct{}
 
 func NewHabitValidation() HabitValidator {
-	return &HabitValidation{}
+	return &habitValidation{}
 }
 
-func (chv *HabitValidation) HabitValidate(createHabitValidation *model.CreateHabitValidation) (string, error) {
+func (cv *habitValidation) HabitValidate(createHabitValidation *model.CreateHabitValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(createHabitValidation)

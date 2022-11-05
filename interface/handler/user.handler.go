@@ -24,13 +24,13 @@ type UserHandler interface {
 
 type userHandler struct {
 	UserUseCase         usecase.UserUseCase      // usecase層
-	UserValidation      validator.UserValidation // interface層
+	UserValidation      validator.UserValidator  // interface層
 	JwtUtil             util.JwtUtil             // interface層
 	ResponseUtil        util.ResponseUtil        // interface層
 	EncryptPasswordUtil util.EncryptPasswordUtil // interface層
 }
 
-func NewUserHandler(userUseCase usecase.UserUseCase, userValidation validator.UserValidation, jwtUtil util.JwtUtil, responseUtil util.ResponseUtil, encryptPasswordUtil util.EncryptPasswordUtil) UserHandler {
+func NewUserHandler(userUseCase usecase.UserUseCase, userValidation validator.UserValidator, jwtUtil util.JwtUtil, responseUtil util.ResponseUtil, encryptPasswordUtil util.EncryptPasswordUtil) UserHandler {
 	return &userHandler{
 		UserUseCase:         userUseCase,
 		UserValidation:      userValidation,
@@ -59,7 +59,7 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := uh.UserValidation.SignupValidator(&signUpUserValidation)
+	errorMessage, err := uh.UserValidation.SignupValidate(&signUpUserValidation)
 	if err != nil {
 		log.Println(err)
 		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
@@ -113,7 +113,7 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := uh.UserValidation.SigninValidator(&signInUserValidation)
+	errorMessage, err := uh.UserValidation.SigninValidate(&signInUserValidation)
 	if err != nil {
 		log.Println(err)
 		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
