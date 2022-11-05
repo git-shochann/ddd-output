@@ -16,18 +16,18 @@ type UserUseCase interface {
 
 // 依存先のインターフェースがあれば書く
 type userUseCase struct {
-	ur domain.UserRepository
+	UserRepository domain.UserRepository
 }
 
-func NewUserUseCase(ur domain.UserRepository) UserUseCase {
+func NewUserUseCase(userRepository domain.UserRepository) UserUseCase {
 	return &userUseCase{
-		ur: ur,
+		UserRepository: userRepository,
 	}
 }
 
 func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
-	if err := uuc.ur.CreateUserInfrastructure(user); err != nil {
+	if err := uuc.UserRepository.CreateUserInfrastructure(user); err != nil {
 		err := fmt.Errorf("userUseCase: failed to create user %w", err)
 		fmt.Printf("err: %v\n", err) // 	err: userUseCase: failed to create user userInfrastructure: failed to create user
 		fmt.Printf("err: %T\n", err) // 	*fmt.wrapError
@@ -40,7 +40,7 @@ func (uuc *userUseCase) CreateUser(user *model.User) (*model.User, error) {
 
 func (uuc *userUseCase) GetUserByEmail(email string) (*model.User, error) {
 
-	user, err := uuc.ur.GetUserByEmailInfrastructure(email)
+	user, err := uuc.UserRepository.GetUserByEmailInfrastructure(email)
 	if err != nil {
 		err := fmt.Errorf("userUseCase: failed to get user %w", err)
 		return nil, err
