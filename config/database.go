@@ -5,27 +5,41 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
 
-var db *gorm.DB
-var err error
+// var db *gorm.DB
+// var err error
 
 func ConnectDB() *gorm.DB {
 
 	user := os.Getenv("DB_USER")
-	pass := os.Getenv("DB_PASS")
+	password := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
 
-	// test:test@tcp(localhost:3306)/test?charset=utf8mb4&parseTime=true
-	dsn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?charset=utf8mb4&parseTime=true", user, pass, dbName)
+	jst, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		log.Fatalf("Enable load location")
+	}
+
+	dsn := mysql.Config{
+		User:      user,
+		Passwd:    password,
+		Net:       "tcp",
+		Addr:      "localhost:3306",
+		DBName:    dbName,
+		Collation: "utf8mb4_unicode_ci",
+		Loc:       jst,
+		ParseTime: true,
+	}
 
 	// コネクションプールの生成
-	db, err = gorm.Open("mysql", dsn)
+	db, err := gorm.Open("mysql", dsn.FormatDSN())
 	if err != nil {
-		log.Fatalf("Enable Connect to DB: %v", err)
+		log.Fatalf("Enable Connect to DB %s", err)
 	} else {
 		fmt.Println("Successfully Connected DB")
 	}
