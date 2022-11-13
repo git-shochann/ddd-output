@@ -63,7 +63,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(err)
 
-		// var jwtErr *customerr.JwtErr
+		var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
@@ -73,10 +73,8 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ResponseUtil.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ResponseUtil.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		// case errors.As(err, &jwtErr):
-		// 	hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
-		// case errors.Is(err, jwtErr):
-		// hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		case errors.As(err, &jwtErr): // errの元の型が *jwtErrだった場合
+			hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
 			hh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
