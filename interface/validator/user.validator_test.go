@@ -7,6 +7,7 @@ import (
 
 // Signup
 func TestSignupValidate(t *testing.T) {
+
 	userValidation := NewUserValidation()
 
 	// missing first name
@@ -16,11 +17,8 @@ func TestSignupValidate(t *testing.T) {
 		Email:     "taro@gmail.com",
 		Password:  "taro0123456",
 	}
-	expect := "Invalid First Name"
-	result, _ := userValidation.SignupValidate(&userSignUpValidation)
-	if result != expect {
-		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
-	}
+	expectMessage := "Invalid First Name"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
 	// missing last name
 	userSignUpValidation = model.UserSignUpValidation{
@@ -29,11 +27,8 @@ func TestSignupValidate(t *testing.T) {
 		Email:     "taro@gmail.com",
 		Password:  "taro0123456",
 	}
-	expect = "Invalid Last Name"
-	result, _ = userValidation.SignupValidate(&userSignUpValidation)
-	if result != expect {
-		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
-	}
+	expectMessage = "Invalid Last Name"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
 	// missing email
 	userSignUpValidation = model.UserSignUpValidation{
@@ -42,11 +37,19 @@ func TestSignupValidate(t *testing.T) {
 		Email:     "",
 		Password:  "taro0123456",
 	}
-	expect = "Invalid Email"
-	result, _ = userValidation.SignupValidate(&userSignUpValidation)
-	if result != expect {
-		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
+	expectMessage = "Invalid Email"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
+
+	//FIXME
+	// invalid email format
+	userSignUpValidation = model.UserSignUpValidation{
+		FirstName: "Taro",
+		LastName:  "Taro",
+		Email:     "tarotarotaro",
+		Password:  "taro0123456",
 	}
+	expectMessage = "Invalid Email"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
 	// missing password
 	userSignUpValidation = model.UserSignUpValidation{
@@ -55,12 +58,19 @@ func TestSignupValidate(t *testing.T) {
 		Email:     "taro@gmail.com",
 		Password:  "",
 	}
-	expect = "Invalid Password"
-	result, _ = userValidation.SignupValidate(&userSignUpValidation)
-	if result != expect {
-		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
-	}
+	expectMessage = "Invalid Password"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
+
+	// password 8文字以下
+
+	// password 15文字以下
 
 }
 
-// Signin
+func ExecuteSignUpValidateTest(t *testing.T, userValidation UserValidator, userSignUpValidation *model.UserSignUpValidation, expect string) {
+
+	result, _ := userValidation.SignupValidate(userSignUpValidation)
+	if result != expect {
+		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
+	}
+}
