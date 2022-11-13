@@ -63,7 +63,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(err)
 
-		var jwtErr *customerr.JwtErr
+		// var jwtErr *customerr.JwtErr
 
 		switch {
 		// error型の変数を引数に取る
