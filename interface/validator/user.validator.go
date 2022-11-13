@@ -10,8 +10,8 @@ import (
 
 // まずとりあえず他の層で使えるようにinterfaceを定義する
 type UserValidator interface {
-	SignupValidate(*model.UserSignUpValidation) (string, error)
-	SigninValidate(*model.UserSignInValidation) (string, error)
+	SignUpValidate(*model.UserSignUpValidation) (string, error)
+	SignInValidate(*model.UserSignInValidation) (string, error)
 }
 
 // ここの構造体で、他の層に依存している(使いたいメソッドを持ったインターフェースはある？)
@@ -22,7 +22,7 @@ func NewUserValidation() UserValidator {
 	return &userValidation{}
 }
 
-func (uv *userValidation) SignupValidate(UserSignUpValidation *model.UserSignUpValidation) (string, error) {
+func (uv *userValidation) SignUpValidate(UserSignUpValidation *model.UserSignUpValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(UserSignUpValidation)
@@ -51,7 +51,7 @@ func (uv *userValidation) SignupValidate(UserSignUpValidation *model.UserSignUpV
 	return "", err
 }
 
-func (uv *userValidation) SigninValidate(UserSignInValidation *model.UserSignInValidation) (string, error) {
+func (uv *userValidation) SignInValidate(UserSignInValidation *model.UserSignInValidation) (string, error) {
 
 	validate := validator.New()
 	err := validate.Struct(UserSignInValidation)

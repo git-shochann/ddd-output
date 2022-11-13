@@ -59,7 +59,7 @@ func (uh *userHandler) SignUpFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := uh.UserValidation.SignupValidate(&signUpUserValidation)
+	errorMessage, err := uh.UserValidation.SignUpValidate(&signUpUserValidation)
 	if err != nil {
 		log.Println(err)
 		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
@@ -113,7 +113,7 @@ func (uh *userHandler) SignInFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errorMessage, err := uh.UserValidation.SigninValidate(&signInUserValidation)
+	errorMessage, err := uh.UserValidation.SignInValidate(&signInUserValidation)
 	if err != nil {
 		log.Println(err)
 		uh.ResponseUtil.SendErrorResponse(w, errorMessage, http.StatusBadRequest)
