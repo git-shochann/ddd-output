@@ -19,7 +19,7 @@ func TestSignupValidate(t *testing.T) {
 	expect := "Invalid First Name"
 	result, _ := userValidation.SignupValidate(&userSignUpValidation)
 	if result != expect {
-		t.Fatalf("\n実際: %v\n理想: %v", result, expect)
+		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
 	}
 
 	// missing last name
@@ -32,7 +32,7 @@ func TestSignupValidate(t *testing.T) {
 	expect = "Invalid Last Name"
 	result, _ = userValidation.SignupValidate(&userSignUpValidation)
 	if result != expect {
-		t.Fatalf("\n実際: %v\n理想: %v", result, expect)
+		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
 	}
 
 	// missing email
@@ -45,7 +45,7 @@ func TestSignupValidate(t *testing.T) {
 	expect = "Invalid Email"
 	result, _ = userValidation.SignupValidate(&userSignUpValidation)
 	if result != expect {
-		t.Fatalf("\n実際: %v\n理想: %v", result, expect)
+		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
 	}
 
 	// missing password
@@ -58,7 +58,7 @@ func TestSignupValidate(t *testing.T) {
 	expect = "Invalid Password"
 	result, _ = userValidation.SignupValidate(&userSignUpValidation)
 	if result != expect {
-		t.Fatalf("\n実際: %v\n理想: %v", result, expect)
+		t.Fatalf("\nactual: %v\nexpected: %v", result, expect)
 	}
 
 }

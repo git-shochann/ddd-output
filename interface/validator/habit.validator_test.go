@@ -13,8 +13,8 @@ func TestCreateHabitValidator(t *testing.T) {
 	createHabitValidation := model.CreateHabitValidation{
 		Content: "testtest",
 	}
-	message, _ := habitValidation.HabitValidate(&createHabitValidation)
-	if message != "" {
+	result, _ := habitValidation.HabitValidate(&createHabitValidation)
+	if result != "" {
 		t.Fatal("failed test")
 	}
 
@@ -22,8 +22,8 @@ func TestCreateHabitValidator(t *testing.T) {
 	createHabitValidation = model.CreateHabitValidation{
 		Content: "",
 	}
-	message, _ = habitValidation.HabitValidate(&createHabitValidation)
-	if message != "Invalid Content" {
+	result, _ = habitValidation.HabitValidate(&createHabitValidation)
+	if result != "Invalid Content" {
 		t.Fatal("failed test")
 	}
 
