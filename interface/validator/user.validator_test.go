@@ -40,7 +40,7 @@ func TestSignupValidate(t *testing.T) {
 	// expectMessage = "Invalid Email"
 	// ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
-	// // emailフォーマットではない
+	// emailフォーマットではない
 	// userSignUpValidation = model.UserSignUpValidation{
 	// 	FirstName: "Taro",
 	// 	LastName:  "Taro",

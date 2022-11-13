@@ -22,12 +22,12 @@ type UserSignUpValidation struct {
 	FirstName string `json:"firstname" validate:"required"`
 	LastName  string `json:"lastname" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
-	Password  string `json:"password" validate:"required,min=8,max=15,containsany=0123456789"`
+	Password  string `json:"password" validate:"required,min=8,max=15,alphanum"`
 }
 
 type UserSignInValidation struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8,max=15,containsany=0123456789"`
+	Password string `json:"password" validate:"required,min=8,max=15,alphanum"`
 }
 
 type UserAuthResponse struct {
