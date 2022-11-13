@@ -62,7 +62,7 @@ func main() {
 
 	// HandleFunc() 第二引数 -> 引数に関数
 
-	// root(test)
+	// root
 	router.HandleFunc("/", habitHandler.IndexFunc).Methods("GET")
 
 	// for user

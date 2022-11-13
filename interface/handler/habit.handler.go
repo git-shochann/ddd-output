@@ -61,14 +61,7 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 	userID, err := hh.JwtUtil.CheckJWTToken(r)
 	if err != nil {
 
-		log.Println(err) // ログに出力する
-
-		// ここで返ってくるエラー型は4種類あるのでエラー型によって処理を分岐する
-
-		// ErrInvalidToken
-		// ErrInvalidSignature
-		// ErrAssertType
-		// jwtErr
+		log.Println(err)
 
 		var jwtErr *customerr.JwtErr
 
@@ -80,12 +73,13 @@ func (hh *habitHandler) CreateFunc(w http.ResponseWriter, r *http.Request) {
 			hh.ResponseUtil.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
 		case errors.Is(err, customerr.ErrAssertType):
 			hh.ResponseUtil.SendErrorResponse(w, "invalid token", http.StatusBadRequest)
-		case errors.As(err, &jwtErr):
-			hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		// case errors.As(err, &jwtErr):
+		// 	hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
+		// case errors.Is(err, jwtErr):
+		// hh.ResponseUtil.SendErrorResponse(w, "jwt error", http.StatusBadRequest)
 		default:
 			hh.ResponseUtil.SendErrorResponse(w, "unknown error occured", http.StatusInternalServerError)
 		}
-
 		return
 	}
 
