@@ -10,7 +10,7 @@ func TestSignupValidate(t *testing.T) {
 
 	userValidation := NewUserValidation()
 
-	// missing first name
+	// first name 空白
 	userSignUpValidation := model.UserSignUpValidation{
 		FirstName: "",
 		LastName:  "Taro",
@@ -20,7 +20,7 @@ func TestSignupValidate(t *testing.T) {
 	expectMessage := "Invalid First Name"
 	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
-	// missing last name
+	// last name 空白
 	userSignUpValidation = model.UserSignUpValidation{
 		FirstName: "Taro",
 		LastName:  "",
@@ -30,7 +30,7 @@ func TestSignupValidate(t *testing.T) {
 	expectMessage = "Invalid Last Name"
 	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
-	// missing email
+	// email 空白
 	userSignUpValidation = model.UserSignUpValidation{
 		FirstName: "Taro",
 		LastName:  "Taro",
@@ -41,7 +41,7 @@ func TestSignupValidate(t *testing.T) {
 	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
 	//FIXME
-	// invalid email format
+	// emailフォーマットではない
 	userSignUpValidation = model.UserSignUpValidation{
 		FirstName: "Taro",
 		LastName:  "Taro",
@@ -51,7 +51,7 @@ func TestSignupValidate(t *testing.T) {
 	expectMessage = "Invalid Email"
 	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
-	// missing password
+	// password 空白
 	userSignUpValidation = model.UserSignUpValidation{
 		FirstName: "Taro",
 		LastName:  "Taro",
@@ -61,9 +61,49 @@ func TestSignupValidate(t *testing.T) {
 	expectMessage = "Invalid Password"
 	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
+	//FIXME
 	// password 8文字以下
+	userSignUpValidation = model.UserSignUpValidation{
+		FirstName: "Taro",
+		LastName:  "Taro",
+		Email:     "taro@gmail.com",
+		Password:  "tarotar", // 7
+	}
+	expectMessage = "Invalid Password"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
-	// password 15文字以下
+	//FIXME
+	// password 15文字以上
+	userSignUpValidation = model.UserSignUpValidation{
+		FirstName: "Taro",
+		LastName:  "Taro",
+		Email:     "taro@gmail.com",
+		Password:  "tarotarotarotaro", // 16
+	}
+	expectMessage = "Invalid Password"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
+
+	// FIXME
+	// password 英語, 数字含まれているかどうか？ 英語のみ
+	userSignUpValidation = model.UserSignUpValidation{
+		FirstName: "Taro",
+		LastName:  "Taro",
+		Email:     "taro@gmail.com",
+		Password:  "tarotaro", // 英語のみ
+	}
+	expectMessage = "Invalid Password"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
+
+	// FIXME
+	// password 英語, 数字含まれているかどうか？ 数字のみ
+	userSignUpValidation = model.UserSignUpValidation{
+		FirstName: "Taro",
+		LastName:  "Taro",
+		Email:     "taro@gmail.com",
+		Password:  "12345678",
+	}
+	expectMessage = "Invalid Password"
+	ExecuteSignUpValidateTest(t, userValidation, &userSignUpValidation, expectMessage)
 
 }
 
