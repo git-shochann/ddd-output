@@ -1,10 +1,10 @@
-# Go Rest API with Docker
+# Go Rest API
 
 ## 構成
 
 - レイヤードアーキテクチャ + DDD
-- Push,PL のタイミングで Lint チェック(GitHub Actions)
 - DB 環境は Docker にて構築
+- Push,PL のタイミングで Lint チェック(GitHub Actions)
 
 ## 参考図
 
