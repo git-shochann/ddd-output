@@ -31,7 +31,7 @@ func NewHabitUseCase(habitRepository domain.HabitRepository) HabitUseCase {
 	}
 }
 
-// WIP: ここで引数にhttp.ResponseWriterが来ることはない
+// ここの層で引数にhttp.ResponseWriterが来ることはない
 
 // domainのインターフェースを使って、実際に処理を行う
 func (huc *habitUseCase) CreateHabit(habit *model.Habit) (*model.Habit, error) {

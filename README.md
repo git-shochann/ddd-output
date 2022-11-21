@@ -4,7 +4,7 @@
 
 - レイヤードアーキテクチャ + DDD
 - DB 環境は Docker にて構築
-- Push,PL のタイミングで Lint チェック(GitHub Actions)
+- Push,PL のタイミングで Lint チェック , GitHub Actions を使用
 
 ## 参考図
 
