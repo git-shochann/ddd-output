@@ -70,10 +70,10 @@ func main() {
 	router.HandleFunc("/api/v1/signin", userHandler.SignInFunc).Methods("POST")
 
 	// for habit
-	router.HandleFunc("/api/v1/create", habitHandler.CreateFunc).Methods("POST")
-	router.HandleFunc("/api/v1/update/{id}", habitHandler.UpdateFunc).Methods("PATCH")
-	router.HandleFunc("/api/v1/delete/{id}", habitHandler.DeleteFunc).Methods("DELETE")
-	router.HandleFunc("/api/v1/get", habitHandler.GetAllHabitFunc).Methods("GET")
+	router.HandleFunc("/api/v1/habit", habitHandler.CreateFunc).Methods("POST")
+	router.HandleFunc("/api/v1/habit/{id}", habitHandler.UpdateFunc).Methods("PATCH")
+	router.HandleFunc("/api/v1/habit/{id}", habitHandler.DeleteFunc).Methods("DELETE")
+	router.HandleFunc("/api/v1/habits", habitHandler.GetAllHabitFunc).Methods("GET")
 
 	fmt.Println("Start Server!")
 	log.Fatal(http.ListenAndServe(":8080", router))
