@@ -1,6 +1,4 @@
-# Go Rest API
-
-![構成図](https://i0.wp.com/mintaku-blog.net/mintaku/wp-content/uploads/2020/07/5.png?w=1600&ssl=1)
+# Go Backend API
 
 ## API 一覧
 
