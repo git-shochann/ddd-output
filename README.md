@@ -1,14 +1,6 @@
 # Go Rest API
 
-## 構成
-
-- レイヤードアーキテクチャ + DDD
-- DB 環境は Docker にて構築
-- Push,PL のタイミングで Lint チェック , GitHub Actions を使用
-
-## 参考図
-
-![DDD](https://i0.wp.com/mintaku-blog.net/mintaku/wp-content/uploads/2020/07/5.png?w=1600&ssl=1)
+![構成図](https://i0.wp.com/mintaku-blog.net/mintaku/wp-content/uploads/2020/07/5.png?w=1600&ssl=1)
 
 ## API 一覧
 
